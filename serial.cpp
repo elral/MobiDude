@@ -2,7 +2,7 @@
 //	No warranties are given, etc...
 //	This file is a component of the AVR Firmware Uploader
 
-#include "serial.hpp"
+#include "include/serial.h"
 
 
 bool getPorts(std::vector <std::string>* splsarray){

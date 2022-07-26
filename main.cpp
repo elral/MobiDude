@@ -12,10 +12,10 @@
 #include <thread>
 
 #include "avrfmu_private.h"
-#include "include/serial.hpp"
-#include "include/staticData.hpp"
-#include "include/serial.hpp"
-#include "include/shell.hpp"
+#include "include/serial.h"
+#include "include/staticData.h"
+#include "include/serial.h"
+#include "include/shell.h"
 
 
 bool openfile(char* filepath, char* filename);

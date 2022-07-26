@@ -98,21 +98,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="include\serial.cpp" />
-    <ClCompile Include="include\shell.cpp" />
+    <ClCompile Include="serial.cpp" />
+    <ClCompile Include="shell.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\serial.hpp" />
-    <ClInclude Include="include\shell.hpp" />
-    <ClInclude Include="include\staticConfig.hpp" />
-    <ClInclude Include="include\staticData.hpp" />
+    <ClInclude Include="include\serial.h" />
+    <ClInclude Include="include\shell.h" />
+    <ClInclude Include="include\staticConfig.h" />
+    <ClInclude Include="include\staticData.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resource.rc" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="readme.md" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

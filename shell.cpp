@@ -2,7 +2,7 @@
 //	No warranties are given, etc...
 //	This file is a component of the AVR Firmware Uploader
 
-#include "shell.hpp"
+#include "include/shell.h"
 
 void launcher(const char* use_mcu, const char* use_prog, const char* use_speed, const char* use_port, const char* filepath, bool* running, DWORD* exitcode){
 	

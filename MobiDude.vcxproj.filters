@@ -18,24 +18,24 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="include\serial.cpp">
+    <ClCompile Include="serial.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="include\shell.cpp">
+    <ClCompile Include="shell.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\serial.hpp">
+    <ClInclude Include="include\serial.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\shell.hpp">
+    <ClInclude Include="include\shell.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\staticConfig.hpp">
+    <ClInclude Include="include\staticConfig.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\staticData.hpp">
+    <ClInclude Include="include\staticData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -43,8 +43,5 @@
     <ResourceCompile Include="resource.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="readme.md" />
   </ItemGroup>
 </Project>
