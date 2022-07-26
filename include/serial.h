@@ -11,7 +11,7 @@
 #include <vector>
 #include <string>
 
-#include "staticConfig.hpp"
+#include "staticConfig.h"
 
 
 	bool getPorts(std::vector <std::string>* splsarray);
