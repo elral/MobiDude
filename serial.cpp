@@ -1,6 +1,3 @@
-//  2022 maddsua | https://gitlab.com/maddsua
-//	No warranties are given, etc...
-//	This file is a component of the AVR Firmware Uploader
 
 #include "include/serial.h"
 

@@ -1,9 +1,4 @@
-//  2022 maddsua | https://gitlab.com/maddsua
-//	No warranties are given, etc...
-//	This file is a component of the AVR Firmware Uploader
-
-#ifndef _MADDSUA_WINAPI_SERIAL
-#define _MADDSUA_WINAPI_SERIAL
+#pragma once
 
 #include <stdio.h>
 #include <windows.h>
@@ -14,6 +9,5 @@
 #include "staticConfig.h"
 
 
-	bool getPorts(std::vector <std::string>* splsarray);
+bool getPorts(std::vector <std::string>* splsarray);
 
-#endif
