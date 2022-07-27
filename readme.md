@@ -9,7 +9,7 @@ Features:
 - Upload firmare files by just defining your Arduino Board and selecting the firmware file
 
 
-<img src="info/interface-100.png" width="356"/>
+<img src="info/interface-100.jpg" width="356"/>
 
 
 ## List of arduino boards
