@@ -18,9 +18,9 @@ bool getPorts(std::vector <std::string>* splsarray){
 		
 		//	generate port name
 		char thisPortName[comPortNameSize];
-			sprintf(thisPortName, "COM%i", i);
+			sprintf_s(thisPortName, "COM%i", i);
 		char thisPortPath[comPortNameSize];
-			sprintf(thisPortPath, "\\\\.\\%s", thisPortName);
+			sprintf_s(thisPortPath, "\\\\.\\%s", thisPortName);
 		
 		//	try to open port
 		HANDLE Port  = CreateFile(thisPortPath, GENERIC_READ, 0, NULL, OPEN_EXISTING, 0, NULL);

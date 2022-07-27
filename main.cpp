@@ -173,21 +173,21 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 		//	draw dropboxes	
 			//	mcu dropbox
 			box_avrmcu = CreateWindow(WC_COMBOBOX, NULL, WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST | CBS_SIMPLE | WS_VSCROLL, 40, 170, 130, 380, hwnd, (HMENU)GUI_BOX_MCU, NULL, NULL);
-				for(int i = 0; i < db_avrmcu.size(); i++){ 
+				for(u_int i = 0; i < db_avrmcu.size(); i++){ 
 					SendMessage(box_avrmcu, CB_ADDSTRING, 0, (LPARAM) db_avrmcu[i].c_str());
 				}
 				SendMessage(box_avrmcu, CB_SETCURSEL , sel_mcu, (LPARAM)NULL);
 				
 			//	programmer dropbox
 			box_avrprg = CreateWindow(WC_COMBOBOX, NULL, WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST | CBS_SIMPLE | WS_VSCROLL, 175, 170, 130, 200, hwnd, (HMENU)GUI_BOX_PRG, NULL, NULL);
-				for(int i = 0; i < db_avrprog.size(); i++){ 
+				for(u_int i = 0; i < db_avrprog.size(); i++){ 
 					SendMessage(box_avrprg, CB_ADDSTRING, 0, (LPARAM) db_avrprog[i].c_str());
 				}
 				SendMessage(box_avrprg, CB_SETCURSEL , sel_prg, (LPARAM)NULL);
 			
 			//	serial speed dropbox
 			box_serspd = CreateWindow(WC_COMBOBOX, NULL, WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST | CBS_SIMPLE | WS_VSCROLL, 40, 215, 130, 200, hwnd, (HMENU)GUI_BOX_SPD, NULL, NULL);
-				for(int i = 0; i < db_speed.size(); i++){ 
+				for(u_int i = 0; i < db_speed.size(); i++){ 
 					
 					std::string tempSpeedStr = db_speed[i] + " baud";
 					SendMessage(box_serspd, CB_ADDSTRING, 0, (LPARAM) tempSpeedStr.c_str());
@@ -196,7 +196,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 				
 			//	com port dropbox
 			box_comport = CreateWindow(WC_COMBOBOX, NULL, WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST | CBS_SIMPLE | WS_VSCROLL, 175, 215, 130, 200, hwnd, (HMENU)GUI_BOX_COM, NULL, NULL);
-				for(int i = 0; i < serialPorts.size(); i++){ 
+				for(u_int i = 0; i < serialPorts.size(); i++){ 
 					SendMessage(box_comport, CB_ADDSTRING, 0, (LPARAM) serialPorts[i].c_str());
 				}
 				SendMessage(box_comport, CB_SETCURSEL , sel_com, (LPARAM)NULL);
@@ -258,7 +258,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 		//	load startup file
 			if(openFileAtStartup.size() > 8 && openFileAtStartup.size() < MAX_PATH){
 				
-				strcpy(filepath, openFileAtStartup.c_str());
+				strcpy_s(filepath, openFileAtStartup.c_str());
 				cutFilePath(openFileAtStartup.c_str(), filename);
 				
 				//	black magic trick
@@ -324,8 +324,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 								
 								//	display file name
 								char showfilename[binfilenamelen];
-									strcpy(showfilename, "File: ");
-									strcpy(showfilename, filename);
+									strcpy_s(showfilename, "File: ");
+									strcpy_s(showfilename, filename);
 									
 									
 								//	try to load config file
@@ -360,7 +360,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 											
 											//	compare mcu
 											std::string search_pattern_mcu = "MCU=";
-											for(int i = 0; i < db_avrmcu.size(); i++){
+											for(u_int i = 0; i < db_avrmcu.size(); i++){
 											
 												if(configFileContents.find(search_pattern_mcu + db_avrmcu[i] + "\n") != std::string::npos){
 													
@@ -371,7 +371,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 											}
 											//	compare prorammer
 											std::string search_pattern_loader = "LDR=";
-											for(int i = 0; i < db_avrprog.size(); i++){
+											for(u_int i = 0; i < db_avrprog.size(); i++){
 											
 												if(configFileContents.find(search_pattern_loader + db_avrprog[i] + "\n") != std::string::npos){
 													
@@ -382,7 +382,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 											}
 											//	compare speed
 											std::string search_pattern_speed = "SPD=";
-											for(int i = 0; i < db_speed.size(); i++){
+											for(u_int i = 0; i < db_speed.size(); i++){
 											
 												if(configFileContents.find(search_pattern_speed + db_speed[i] + "\n") != std::string::npos){
 													
@@ -486,7 +486,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 						case GUI_BTN_HELP:{
 							
 							char msgabout[512];
-								sprintf(msgabout, "%s v%i.%i.%i\nA graphical interface for avrdude\n\n%s\n%s", PRODUCT_NAME, VER_MAJOR, VER_MINOR, VER_RELEASE, VER_AUTHSTAMP, LEGAL_COPYRIGHT);
+								sprintf_s(msgabout, "%s v%i.%i.%i\nA graphical interface for avrdude\n\n%s\n%s", PRODUCT_NAME, VER_MAJOR, VER_MINOR, VER_RELEASE, VER_AUTHSTAMP, LEGAL_COPYRIGHT);
 							
 							MessageBox(NULL, msgabout, "About...", 0);
 							break;
@@ -584,7 +584,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 			ShowWindow(stc_boardname, false);
 			ShowWindow(stc_boardicon, false);
 		
-		for(short i = 0; i < db_arduino.size(); i++){
+		for(u_int i = 0; i < db_arduino.size(); i++){
 			
 			if(db_arduino[i].mcu == db_avrmcu[sel_mcu] && db_arduino[i].ldr == db_avrprog[sel_prg] && db_arduino[i].speed == db_speed[sel_spd]){
 				

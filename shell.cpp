@@ -7,7 +7,7 @@
 void launcher(const char* use_mcu, const char* use_prog, const char* use_speed, const char* use_port, const char* filepath, bool* running, DWORD* exitcode){
 	
 	char loaderCommand[dudecmdlen] = {0};
-		sprintf(loaderCommand, "avrdude.exe -v -p%s -c%s -P %s -b%s -D -U flash:w:\"%s\":a", use_mcu, use_prog, use_port, use_speed, filepath);
+		sprintf_s(loaderCommand, "avrdude.exe -v -p%s -c%s -P %s -b%s -D -U flash:w:\"%s\":a", use_mcu, use_prog, use_port, use_speed, filepath);
 								
 	STARTUPINFO stinf = {0};
 	stinf.cb = sizeof(stinf);
