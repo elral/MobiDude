@@ -276,8 +276,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 								if (hCom == INVALID_HANDLE_VALUE)
 								{
 									//  Handle the error.
-									printf("CreateFile failed with error %d.\n", GetLastError());
-									return (1);
+									// printf("CreateFile failed with error %d.\n", GetLastError());
+									// return (1);
 								}
 
 								//  Initialize the DCB structure.
