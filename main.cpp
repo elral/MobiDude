@@ -83,6 +83,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 	
 	static std::thread worker;
 	static std::vector <std::string> serialPorts;
+	static std::vector <std::string> serialPortsProMicro;
 	
 	static HWND stc_filename;
 	static HWND box_avrboard;
@@ -245,7 +246,89 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 							//	start routine
 							inProgress = true;
 							dudeStat = 0;
-							worker = std::thread(launcher, db_arduino[sel_board].mcu.c_str(), db_arduino[sel_board].ldr.c_str(), db_arduino[sel_board].speed.c_str(), serialPorts[sel_com].c_str(), filepath, &inProgress, &dudeStat);
+
+							std::string serialport;
+							if (strcmp(db_arduino[sel_board].mcu.c_str(), "atmega32u4") ) {	// it's an ProMicro, entering bootloader will change the serial port
+								getPorts(&serialPortsProMicro);
+								UINT i = 0;
+								while (!strcmp(db_arduino[i].mcu.c_str(), serialPortsProMicro[i].c_str())) {
+									i++;
+								}
+								serialport = serialPortsProMicro[i].c_str();
+
+								// open serial port with 1200 Baud to enter bootloader
+								DCB dcb;
+								HANDLE hCom;
+								BOOL fSuccess;
+
+								//TCHAR* pcCommPort = TEXT("COM1"); //  Most systems have a COM1 port
+								TCHAR* pcCommPort = TEXT(serialport); //  Most systems have a COM1 port
+
+								//  Open a handle to the specified com port.
+								hCom = CreateFile(pcCommPort,
+									GENERIC_READ | GENERIC_WRITE,
+									0,      //  must be opened with exclusive-access
+									NULL,   //  default security attributes
+									OPEN_EXISTING, //  must use OPEN_EXISTING
+									0,      //  not overlapped I/O
+									NULL); //  hTemplate must be NULL for comm devices
+
+								if (hCom == INVALID_HANDLE_VALUE)
+								{
+									//  Handle the error.
+									printf("CreateFile failed with error %d.\n", GetLastError());
+									return (1);
+								}
+
+								//  Initialize the DCB structure.
+								SecureZeroMemory(&dcb, sizeof(DCB));
+								dcb.DCBlength = sizeof(DCB);
+
+								//  Build on the current configuration by first retrieving all current
+								//  settings.
+								fSuccess = GetCommState(hCom, &dcb);
+
+								if (!fSuccess)
+								{
+									//  Handle the error.
+									// printf("GetCommState failed with error %d.\n", GetLastError());
+									// return (2);
+								}
+
+
+								//  Fill in some DCB values and set the com state: 
+								//  57,600 bps, 8 data bits, no parity, and 1 stop bit.
+								dcb.BaudRate = CBR_1200;     //  baud rate
+								dcb.ByteSize = 8;             //  data size, xmit and rcv
+								dcb.Parity = NOPARITY;      //  parity bit
+								dcb.StopBits = ONESTOPBIT;    //  stop bit
+
+								fSuccess = SetCommState(hCom, &dcb);
+
+								if (!fSuccess)
+								{
+									//  Handle the error.
+									// printf("SetCommState failed with error %d.\n", GetLastError());
+									// return (3);
+								}
+
+								//  Get the comm config again.
+								fSuccess = GetCommState(hCom, &dcb);
+
+								if (!fSuccess)
+								{
+									//  Handle the error.
+									// printf("GetCommState failed with error %d.\n", GetLastError());
+									// return (2);
+								}
+
+							}
+							else {
+								serialport = serialPorts[sel_board].c_str();
+							}
+
+							worker = std::thread(launcher, db_arduino[sel_board].mcu.c_str(), db_arduino[sel_board].ldr.c_str(), db_arduino[sel_board].speed.c_str(), serialport.c_str(), filepath, &inProgress, &dudeStat);
+							//worker = std::thread(launcher, db_arduino[sel_board].mcu.c_str(), db_arduino[sel_board].ldr.c_str(), db_arduino[sel_board].speed.c_str(), serialPorts[sel_com].c_str(), filepath, &inProgress, &dudeStat);
 							
 							break;
 						}
