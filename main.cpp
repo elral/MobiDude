@@ -322,14 +322,18 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 									MessageBox(NULL, "GetCommState failed with error","Open COM port", MB_ICONINFORMATION | MB_OK);
 								}
 
+								CloseHandle(hCom);
+								// wait 1 sec. to appear new COM port (might be to short...)
+								sleep(1000);
+
 								// and get the new COM port
 								getPorts(&serialPortsProMicro);
-								UINT i = 0;
+								u_int i = 0;
+								// check which is the new one
 								while (!strcmp(db_arduino[i].mcu.c_str(), serialPortsProMicro[i].c_str())) {
 									i++;
 								}
 								serialport = serialPortsProMicro[i].c_str();
-
 							}
 							else {
 								serialport = serialPorts[sel_board].c_str();
