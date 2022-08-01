@@ -255,10 +255,12 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 								BOOL fSuccess;
 
 								//TCHAR* pcCommPort = TEXT("COM1"); //  Most systems have a COM1 port
-								TCHAR* pcCommPort = TEXT(serialport); //  Most systems have a COM1 port
+								//TCHAR* pcCommPort = TEXT(serialport); //  Most systems have a COM1 port
+								// CAUTION!! filename for COM ports > 9 must be: "\\\\.\\COM15"
+								// this syntax works also for COM ports < 10
 
 								//  Open a handle to the specified com port.
-								hCom = CreateFile(pcCommPort,
+								hCom = CreateFile(serialPortsProMicro[sel_board].c_str(),
 									GENERIC_READ | GENERIC_WRITE,
 									0,      //  must be opened with exclusive-access
 									NULL,   //  default security attributes
@@ -271,6 +273,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 									//  Handle the error.
 									// printf("CreateFile failed with error %d.\n", GetLastError());
 									// return (1);
+									MessageBox(NULL, "CreateFile failed with error","Open COM port", MB_ICONINFORMATION | MB_OK);
+									MessageBox(NULL, printf("CreateFile failed with error %d.\n", GetLastError()), MB_ICONINFORMATION | MB_OK);
 								}
 
 								//  Initialize the DCB structure.
@@ -286,6 +290,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 									//  Handle the error.
 									// printf("GetCommState failed with error %d.\n", GetLastError());
 									// return (2);
+									MessageBox(NULL, "GetCommState failed with error","Open COM port", MB_ICONINFORMATION | MB_OK);
 								}
 
 
@@ -303,6 +308,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 									//  Handle the error.
 									// printf("SetCommState failed with error %d.\n", GetLastError());
 									// return (3);
+									MessageBox(NULL, "SetCommState failed with error","Open COM port", MB_ICONINFORMATION | MB_OK);
 								}
 
 								//  Get the comm config again.
@@ -313,6 +319,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 									//  Handle the error.
 									// printf("GetCommState failed with error %d.\n", GetLastError());
 									// return (2);
+									MessageBox(NULL, "GetCommState failed with error","Open COM port", MB_ICONINFORMATION | MB_OK);
 								}
 
 								// and get the new COM port
