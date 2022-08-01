@@ -249,13 +249,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 
 							std::string serialport;
 							if (strcmp(db_arduino[sel_board].mcu.c_str(), "atmega32u4") ) {	// it's an ProMicro, entering bootloader will change the serial port
-								getPorts(&serialPortsProMicro);
-								UINT i = 0;
-								while (!strcmp(db_arduino[i].mcu.c_str(), serialPortsProMicro[i].c_str())) {
-									i++;
-								}
-								serialport = serialPortsProMicro[i].c_str();
-
 								// open serial port with 1200 Baud to enter bootloader
 								DCB dcb;
 								HANDLE hCom;
@@ -321,6 +314,14 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 									// printf("GetCommState failed with error %d.\n", GetLastError());
 									// return (2);
 								}
+
+								// and get the new COM port
+								getPorts(&serialPortsProMicro);
+								UINT i = 0;
+								while (!strcmp(db_arduino[i].mcu.c_str(), serialPortsProMicro[i].c_str())) {
+									i++;
+								}
+								serialport = serialPortsProMicro[i].c_str();
 
 							}
 							else {
