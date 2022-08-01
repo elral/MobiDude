@@ -254,13 +254,14 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 								HANDLE hCom;
 								BOOL fSuccess;
 
-								//TCHAR* pcCommPort = TEXT("COM1"); //  Most systems have a COM1 port
-								//TCHAR* pcCommPort = TEXT(serialport); //  Most systems have a COM1 port
 								// CAUTION!! filename for COM ports > 9 must be: "\\\\.\\COM15"
 								// this syntax works also for COM ports < 10
 
+								char PortNo[20] = { 0 }; //contain friendly name
+								printf_s(PortNo, 20, L"\\\\.\\%s", serialPorts[sel_board].c_str());
+
 								//  Open a handle to the specified com port.
-								hCom = CreateFile(serialPortsProMicro[sel_board].c_str(),
+								hCom = CreateFile(PortNo,
 									GENERIC_READ | GENERIC_WRITE,
 									0,      //  must be opened with exclusive-access
 									NULL,   //  default security attributes
@@ -274,7 +275,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 									// printf("CreateFile failed with error %d.\n", GetLastError());
 									// return (1);
 									MessageBox(NULL, "CreateFile failed with error","Open COM port", MB_ICONINFORMATION | MB_OK);
-									MessageBox(NULL, printf("CreateFile failed with error %d.\n", GetLastError()), MB_ICONINFORMATION | MB_OK);
 								}
 
 								//  Initialize the DCB structure.
@@ -324,7 +324,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 
 								CloseHandle(hCom);
 								// wait 1 sec. to appear new COM port (might be to short...)
-								sleep(1000);
+								Sleep(1000);
 
 								// and get the new COM port
 								getPorts(&serialPortsProMicro);
