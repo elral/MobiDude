@@ -246,35 +246,31 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 							//	start routine
 							inProgress = true;
 							dudeStat = 0;
+							const char* serialport;
 
-							std::string serialport;
-							if (strcmp(db_arduino[sel_board].mcu.c_str(), "atmega32u4") ) {	// it's an ProMicro, entering bootloader will change the serial port
+							if (!strcmp(db_arduino[sel_board].mcu.c_str(), "atmega32u4") ) {	// it's an ProMicro, entering bootloader will change the serial port
 								// open serial port with 1200 Baud to enter bootloader
 								DCB dcb;
 								HANDLE hCom;
 								BOOL fSuccess;
-
-								// CAUTION!! filename for COM ports > 9 must be: "\\\\.\\COM15"
+								
+								// CAUTION!! filename for COM ports > 9 must be: "\\.\COM15"
 								// this syntax works also for COM ports < 10
-
-								char PortNo[20] = { 0 }; //contain friendly name
-								printf_s(PortNo, 20, L"\\\\.\\%s", serialPorts[sel_board].c_str());
+								std::string PortNo = "\\\\.\\" + serialPorts[sel_board];
 
 								//  Open a handle to the specified com port.
-								hCom = CreateFile(PortNo,
+								hCom = CreateFile(PortNo.c_str(),
 									GENERIC_READ | GENERIC_WRITE,
-									0,      //  must be opened with exclusive-access
-									NULL,   //  default security attributes
-									OPEN_EXISTING, //  must use OPEN_EXISTING
-									0,      //  not overlapped I/O
-									NULL); //  hTemplate must be NULL for comm devices
+									0,				//  must be opened with exclusive-access
+									NULL,			//  default security attributes
+									OPEN_EXISTING,	//  must use OPEN_EXISTING
+									0,				//  not overlapped I/O
+									NULL);			//  hTemplate must be NULL for comm devices
 
 								if (hCom == INVALID_HANDLE_VALUE)
 								{
-									//  Handle the error.
-									// printf("CreateFile failed with error %d.\n", GetLastError());
-									// return (1);
 									MessageBox(NULL, "CreateFile failed with error","Open COM port", MB_ICONINFORMATION | MB_OK);
+									break;
 								}
 
 								//  Initialize the DCB structure.
@@ -287,27 +283,22 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 
 								if (!fSuccess)
 								{
-									//  Handle the error.
-									// printf("GetCommState failed with error %d.\n", GetLastError());
-									// return (2);
 									MessageBox(NULL, "GetCommState failed with error","Open COM port", MB_ICONINFORMATION | MB_OK);
+									break;
 								}
 
 
 								//  Fill in some DCB values and set the com state: 
-								//  57,600 bps, 8 data bits, no parity, and 1 stop bit.
-								dcb.BaudRate = CBR_1200;     //  baud rate
-								dcb.ByteSize = 8;             //  data size, xmit and rcv
-								dcb.Parity = NOPARITY;      //  parity bit
-								dcb.StopBits = ONESTOPBIT;    //  stop bit
+								//  1200 bps, 8 data bits, no parity, and 1 stop bit.
+								dcb.BaudRate = CBR_1200;		//  baud rate
+								dcb.ByteSize = 8;				//  data size, xmit and rcv
+								dcb.Parity = NOPARITY;			//  parity bit
+								dcb.StopBits = ONESTOPBIT;		//  stop bit
 
 								fSuccess = SetCommState(hCom, &dcb);
 
 								if (!fSuccess)
 								{
-									//  Handle the error.
-									// printf("SetCommState failed with error %d.\n", GetLastError());
-									// return (3);
 									MessageBox(NULL, "SetCommState failed with error","Open COM port", MB_ICONINFORMATION | MB_OK);
 								}
 
@@ -316,21 +307,19 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 
 								if (!fSuccess)
 								{
-									//  Handle the error.
-									// printf("GetCommState failed with error %d.\n", GetLastError());
-									// return (2);
 									MessageBox(NULL, "GetCommState failed with error","Open COM port", MB_ICONINFORMATION | MB_OK);
+									break;
 								}
 
-								CloseHandle(hCom);
-								// wait 1 sec. to appear new COM port (might be to short...)
-								Sleep(1000);
+								// wait to appear new COM port
+								Sleep(1500);
 
 								// and get the new COM port
 								getPorts(&serialPortsProMicro);
 								u_int i = 0;
 								// check which is the new one
-								while (!strcmp(db_arduino[i].mcu.c_str(), serialPortsProMicro[i].c_str())) {
+								while (!strcmp(serialPorts[i].c_str(), serialPortsProMicro[i].c_str()) && i < serialPorts.size())
+								{
 									i++;
 								}
 								serialport = serialPortsProMicro[i].c_str();
@@ -338,9 +327,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 							else {
 								serialport = serialPorts[sel_board].c_str();
 							}
-
-							worker = std::thread(launcher, db_arduino[sel_board].mcu.c_str(), db_arduino[sel_board].ldr.c_str(), db_arduino[sel_board].speed.c_str(), serialport.c_str(), filepath, &inProgress, &dudeStat);
-							//worker = std::thread(launcher, db_arduino[sel_board].mcu.c_str(), db_arduino[sel_board].ldr.c_str(), db_arduino[sel_board].speed.c_str(), serialPorts[sel_com].c_str(), filepath, &inProgress, &dudeStat);
+							worker = std::thread(launcher, db_arduino[sel_board].mcu.c_str(), db_arduino[sel_board].ldr.c_str(), db_arduino[sel_board].speed.c_str(), serialport, filepath, &inProgress, &dudeStat);
 							
 							break;
 						}
