@@ -322,7 +322,13 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 								{
 									i++;
 								}
-								serialport = serialPortsProMicro[i].c_str();
+								if (i == serialPortsProMicro.size())		// COM port has not changed, so ProMicro is already in bootloader mode (no firmware already flashed)
+								{
+									serialport = serialPorts[sel_com].c_str();
+								}
+								else {
+									serialport = serialPortsProMicro[i].c_str();
+								}
 							}
 							else {
 								serialport = serialPorts[sel_com].c_str();
