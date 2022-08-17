@@ -44,4 +44,8 @@
       <Filter>Resource Files</Filter>
     </ResourceCompile>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="build-win\MobiDude-1.0.0.zip" />
+    <None Include="readme.md" />
+  </ItemGroup>
 </Project>
