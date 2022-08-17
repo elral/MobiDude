@@ -1,6 +1,6 @@
 # AVR Firmware Uploader
 
-July 27 2022 - v1.0.0
+August 17 2022 - v1.0.1
 
 Yes, it's just a simple GUI for avrdude.
 
@@ -10,7 +10,7 @@ Features:
 - Upload firmware files by just defining your Arduino Board and selecting the firmware file
 
 
-<img src="info/interface-100.jpg" width="356"/>
+<img src="info/interface-101.jpg" width="356"/>
 
 
 ## List of arduino boards
@@ -20,6 +20,12 @@ Features:
 - Nano (with old and new bootloader)
 - Mini
 - Pro/Mini (with separate USB adapter)
+
+## Erase EEPROM
+For the above mentioned boards also an erase EEPROM .hex file is included.
+Choose the file according your board.
+If you upload this firmware, the existing firmware and the eeprom content will be erased.
+Afterwords upload your firmware file again.
 
 ---
 
