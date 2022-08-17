@@ -371,6 +371,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
         		if(dudeStat == 0){
         			SendMessage(progbar_flash, PBM_SETPOS, progbar_steps, 0);
         			MessageBox(NULL, "Firmware successfully uploaded","avrdude done", MB_ICONINFORMATION | MB_OK);
+					PostQuitMessage(0);
 				}
 				else{
 					SendMessage(progbar_flash, PBM_SETPOS, 0, 0);

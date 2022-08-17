@@ -38,6 +38,6 @@
 
 #define configFileHeader	"#AVRBINARYUPLOADCONFIGFILE\nBIN="
 
-#define PRODUCT_NAME	"MF Firmware Uploader 1.0.0"
+#define PRODUCT_NAME	"MF Firmware Uploader 1.0.1"
 
 
