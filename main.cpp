@@ -270,7 +270,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 
 								if (hCom == INVALID_HANDLE_VALUE)
 								{
-									MessageBox(NULL, "CreateFile failed with error","Open COM port", MB_ICONINFORMATION | MB_OK);
+									MessageBox(NULL, "Open COM port failed with error","Open COM port", MB_ICONINFORMATION | MB_OK);
 									break;
 								}
 
@@ -322,6 +322,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 								while (!strcmp(serialPorts[i].c_str(), serialPortsProMicro[i].c_str()) && i < serialPortsProMicro.size())
 								{
 									i++;
+									if (i == serialPortsProMicro.size()) break;
 								}
 								if (i < serialPortsProMicro.size())		// COM port has changed, so ProMicro is NOT already in bootloader mode
 								{
