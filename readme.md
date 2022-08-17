@@ -8,7 +8,7 @@ It is based on https://github.com/maddsua/arduinouploader
 
 Features:
 - Upload firmware files by just defining your Arduino Board and selecting the firmware file
-
+- Sometimes the ProMicro gets a time out from AVRDude. In this case just start again flashing
 
 <img src="info/interface-101.jpg" width="356"/>
 
