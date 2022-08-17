@@ -256,7 +256,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 								
 								// CAUTION!! filename for COM ports > 9 must be: "\\.\COM15"
 								// this syntax works also for COM ports < 10
-								std::string PortNo = "\\\\.\\" + serialPorts[sel_board];
+								std::string PortNo = "\\\\.\\" + serialPorts[sel_com];
 
 								//  Open a handle to the specified com port.
 								hCom = CreateFile(PortNo.c_str(),
@@ -325,7 +325,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 								serialport = serialPortsProMicro[i].c_str();
 							}
 							else {
-								serialport = serialPorts[sel_board].c_str();
+								serialport = serialPorts[sel_com].c_str();
 							}
 							worker = std::thread(launcher, db_arduino[sel_board].mcu.c_str(), db_arduino[sel_board].ldr.c_str(), db_arduino[sel_board].speed.c_str(), serialport, filepath, &inProgress, &dudeStat);
 							
