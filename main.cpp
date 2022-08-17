@@ -318,7 +318,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 								getPorts(&serialPortsProMicro);
 								u_int i = 0;
 								// check which is the new one
-								while (!strcmp(serialPorts[i].c_str(), serialPortsProMicro[i].c_str()) && i < serialPorts.size())
+								while (!strcmp(serialPorts[i].c_str(), serialPortsProMicro[i].c_str()) && i < serialPortsProMicro.size())
 								{
 									i++;
 								}
