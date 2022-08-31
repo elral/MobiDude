@@ -36,4 +36,4 @@ Afterwords upload your firmware file again.
 Just download the zip package, extract it in an own folder and run MobiDude.exe
 
 
-[Download package 📦](build-win/MobiDude-1.0.0.zip)
+[Download package 📦](build-win/MobiDude-1.0.1.zip)
