@@ -1,6 +1,6 @@
 # AVR Firmware Uploader
 
-August 17 2022 - v1.0.1
+October 11 2022 - v1.0.2
 
 Yes, it's just a simple GUI for avrdude.
 
@@ -27,6 +27,8 @@ Choose the file according your board.
 If you upload this firmware, the existing firmware and the eeprom content will be erased.
 Afterwords upload your firmware file again.
 
+With version 1.0.2 of the EEPROM clear hex files the build in LED of the Arduinos will blink after clearing the EEPROM
+
 ---
 
 ### This package includes next open-source binaries:
@@ -36,4 +38,4 @@ Afterwords upload your firmware file again.
 Just download the zip package, extract it in an own folder and run MobiDude.exe
 
 
-[Download package 📦](build-win/MobiDude-1.0.1.zip)
+[Download package 📦](build-win/MobiDude-1.0.2.zip)
