@@ -126,7 +126,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 			stc_filename = CreateWindow("STATIC", "No binary file selected", WS_VISIBLE | WS_CHILD | SS_LEFT | WS_BORDER | SS_NOTIFY, 25, 73, 265, 20, hwnd, (HMENU)GUI_STAT_FILE, NULL, NULL);
 
 			// tips
-			CreateWindow("STATIC", "Arduino Board", WS_VISIBLE | WS_CHILD | SS_SIMPLE, 40, 155, 130, 16, hwnd, (HMENU)GUI_STAT_TIP_MCU, NULL, NULL);
+			CreateWindow("STATIC", "Board", WS_VISIBLE | WS_CHILD | SS_SIMPLE, 40, 155, 130, 16, hwnd, (HMENU)GUI_STAT_TIP_MCU, NULL, NULL);
 			CreateWindow("STATIC", "Serial port", WS_VISIBLE | WS_CHILD | SS_SIMPLE, 40, 205, 140, 16, hwnd, (HMENU)GUI_STAT_TIP_COM, NULL, NULL);
 				
 			// group
@@ -248,8 +248,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 							dudeStat = 0;
 							const char* serialport;
 							serialport = serialPorts[sel_com].c_str();
-
-							if (!strcmp(db_arduino[sel_board].mcu.c_str(), "atmega32u4") ) {	// it's an ProMicro, entering bootloader will change the serial port
+							
+							// it's an ProMicro or ESP32-S2, entering bootloader will change the serial port
+							if (!strcmp(db_arduino[sel_board].mcu.c_str(), "atmega32u4") || !strcmp(db_arduino[sel_board].architecture.c_str(), "ESP32")) {
 								// open serial port with 1200 Baud to enter bootloader
 								DCB dcb;
 								HANDLE hCom;
@@ -288,7 +289,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 									break;
 								}
 
-
 								//  Fill in some DCB values and set the com state: 
 								//  1200 bps, 8 data bits, no parity, and 1 stop bit.
 								dcb.BaudRate = CBR_1200;		//  baud rate
@@ -298,41 +298,60 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 
 								fSuccess = SetCommState(hCom, &dcb);
 
-								if (!fSuccess)
-								{
-									MessageBox(NULL, "SetCommState failed with error","Open COM port", MB_ICONINFORMATION | MB_OK);
+								if (!strcmp(db_arduino[sel_board].mcu.c_str(), "atmega32u4")) {
+									if (!fSuccess)
+									{
+										MessageBox(NULL, "SetCommState failed with error", "Open COM port", MB_ICONINFORMATION | MB_OK);
+									}
+
+									//  Get the comm config again.
+									fSuccess = GetCommState(hCom, &dcb);
+
+									if (!fSuccess)
+									{
+										MessageBox(NULL, "GetCommState failed with error", "Open COM port", MB_ICONINFORMATION | MB_OK);
+										break;
+									}
+
+									// wait to appear new COM port
+									Sleep(1500);
+
+									// and get the new COM port
+									getPorts(&serialPortsProMicro);
+									u_int i = 0;
+									// check which is the new one
+									while (!strcmp(serialPorts[i].c_str(), serialPortsProMicro[i].c_str()) && i < serialPortsProMicro.size())
+									{
+										i++;
+										if (i == serialPortsProMicro.size()) break;
+									}
+									if (i < serialPortsProMicro.size())		// COM port has changed, so ProMicro is NOT already in bootloader mode
+									{
+										serialport = serialPortsProMicro[i].c_str();
+									}
 								}
-
-								//  Get the comm config again.
-								fSuccess = GetCommState(hCom, &dcb);
-
-								if (!fSuccess)
-								{
-									MessageBox(NULL, "GetCommState failed with error","Open COM port", MB_ICONINFORMATION | MB_OK);
-									break;
-								}
-
-								// wait to appear new COM port
-								Sleep(1500);
-
-								// and get the new COM port
-								getPorts(&serialPortsProMicro);
-								u_int i = 0;
-								// check which is the new one
-								while (!strcmp(serialPorts[i].c_str(), serialPortsProMicro[i].c_str()) && i < serialPortsProMicro.size())
-								{
-									i++;
-									if (i == serialPortsProMicro.size()) break;
-								}
-								if (i < serialPortsProMicro.size())		// COM port has changed, so ProMicro is NOT already in bootloader mode
-								{
-									serialport = serialPortsProMicro[i].c_str();
+								else if (!strcmp(db_arduino[sel_board].architecture.c_str(), "ESP32")) {
+									// why does the ESP32 gets an error message for open the port??
+									// but it seems that the bootloader gets activates!??
+									/*
+									if (!fSuccess)
+									{
+										MessageBox(NULL, "SetCommState failed with error", "Open COM port", MB_ICONINFORMATION | MB_OK);
+									}
+									*/
+									Sleep(1000);
 								}
 							}
 
-							worker = std::thread(launcher, db_arduino[sel_board].mcu.c_str(), db_arduino[sel_board].ldr.c_str(), db_arduino[sel_board].speed.c_str(), serialport, filepath, &inProgress, &dudeStat);
-							
-							break;
+							if (!strcmp(db_arduino[sel_board].architecture.c_str(), "AVR")) {
+								worker = std::thread(launcherAVR, db_arduino[sel_board].mcu.c_str(), db_arduino[sel_board].ldr.c_str(), db_arduino[sel_board].speed.c_str(), serialport, filepath, &inProgress, &dudeStat);
+								break;
+							} else if (!strcmp(db_arduino[sel_board].architecture.c_str(), "ESP32")) {
+								worker = std::thread(launcherESP32_S2, db_arduino[sel_board].mcu.c_str(), db_arduino[sel_board].ldr.c_str(), db_arduino[sel_board].speed.c_str(), serialport, filepath, &inProgress, &dudeStat);
+								break;
+							} else {
+								MessageBox(NULL, "Error! Wrong processor!", "About...", 0);
+							}
 						}
 						
 						case GUI_BTN_CANCEL:{
@@ -449,7 +468,7 @@ bool openfile(char* filepath, char* filename){
 		ofn.hwndOwner = NULL; 
 		ofn.lpstrFile = file; 
 		ofn.nMaxFile = MAX_PATH; 
-		ofn.lpstrFilter = ("Intel HEX\0*.hex\0All files\0*.*\0"); 
+		ofn.lpstrFilter = ("Intel HEX\0*.hex\0bin files\0*.bin\0All files\0*.*\0"); 
 		ofn.nFilterIndex = 1; 
 		ofn.lpstrFileTitle = NULL; 
 		ofn.nMaxFileTitle = 0; 
