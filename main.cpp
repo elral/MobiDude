@@ -7,6 +7,7 @@
 #include <fstream>
 #include <string>
 #include <thread>
+#include <iostream>
 
 #include "include/staticConfig.h"
 #include "include/staticData.h"
@@ -21,6 +22,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam);
 HINSTANCE appInstance;
 
 std::string openFileAtStartup;
+TCHAR fullPath[MAX_PATH] = {0};
+TCHAR driveLetter[3];
+TCHAR directory[MAX_PATH];
+TCHAR FinalPath[MAX_PATH];
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
 	
@@ -105,7 +110,16 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 	static unsigned int waitToFlash = 0;
 	static bool inProgress = false;
 	static DWORD dudeStat = 0;
-		
+	
+	//GetfullPath(1024, fullPath);
+	GetModuleFileName(NULL, fullPath, MAX_PATH);
+	_splitpath(fullPath, driveLetter, directory, NULL, NULL);
+	sprintf(FinalPath, "%s%s", driveLetter, directory);
+	
+	//std::wstring::size_type pos = std::wstring(fullPath).find_last_of(L"\\/");
+	//std::wstring(fullPath).substr(0, pos);
+
+
 	switch(Message) {
 
 		case WM_CREATE: {
@@ -184,7 +198,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 			//	hide in-process controls
 			ShowWindow(btn_canc, false);
 			ShowWindow(progbar_flash, false);
-			
+
 			break;
 		}
 	
@@ -344,10 +358,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 							}
 
 							if (!strcmp(db_arduino[sel_board].architecture.c_str(), "AVR")) {
-								worker = std::thread(launcherAVR, db_arduino[sel_board].mcu.c_str(), db_arduino[sel_board].ldr.c_str(), db_arduino[sel_board].speed.c_str(), serialport, filepath, &inProgress, &dudeStat);
+								worker = std::thread(launcherAVR, FinalPath, db_arduino[sel_board].mcu.c_str(), db_arduino[sel_board].ldr.c_str(), db_arduino[sel_board].speed.c_str(), serialport, filepath, &inProgress, &dudeStat);
 								break;
 							} else if (!strcmp(db_arduino[sel_board].architecture.c_str(), "ESP32")) {
-								worker = std::thread(launcherESP32_S2, db_arduino[sel_board].mcu.c_str(), db_arduino[sel_board].ldr.c_str(), db_arduino[sel_board].speed.c_str(), serialport, filepath, &inProgress, &dudeStat);
+								worker = std::thread(launcherESP32_S2, FinalPath, db_arduino[sel_board].mcu.c_str(), db_arduino[sel_board].ldr.c_str(), db_arduino[sel_board].speed.c_str(), serialport, filepath, &inProgress, &dudeStat);
 								break;
 							} else {
 								MessageBox(NULL, "Error! Wrong processor!", "About...", 0);

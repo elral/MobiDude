@@ -4,12 +4,12 @@
 #include <string>
 #include "include/shell.h"
 
-void launcherAVR(const char* use_mcu, const char* use_prog, const char* use_speed, const char* use_port, const char* filepath, bool* running, DWORD* exitcode){
+void launcherAVR(const TCHAR* fullPath, const char* use_mcu, const char* use_prog, const char* use_speed, const char* use_port, const char* filepath, bool* running, DWORD* exitcode){
 	
 	char loaderCommand[dudecmdlen] = {0};
-	sprintf_s(loaderCommand, "avrdude.exe -v -p%s -c%s -P %s -b%s -D -U flash:w:\"%s\":a", use_mcu, use_prog, use_port, use_speed, filepath);
+	sprintf_s(loaderCommand, "%sAVRDude/avrdude.exe -v -p%s -c%s -P %s -b%s -D -U flash:w:\"%s\":a", fullPath, use_mcu, use_prog, use_port, use_speed, filepath);
 
-	//MessageBox(NULL, loaderCommand, "About...", 0);		// undefine this to get message window with commands for AVRdude
+	MessageBox(NULL, loaderCommand, "About...", 0);		// undefine this to get message window with commands for AVRdude
 
 	STARTUPINFO stinf = {0};
 	stinf.cb = sizeof(stinf);
@@ -36,15 +36,13 @@ void launcherAVR(const char* use_mcu, const char* use_prog, const char* use_spee
 	return;
 }
 
-void launcherESP32_S2(const char* use_mcu, const char* use_prog, const char* use_speed, const char* use_port, const char* filepath, bool* running, DWORD* exitcode) {
+void launcherESP32_S2(const TCHAR* fullPath, const char* use_mcu, const char* use_prog, const char* use_speed, const char* use_port, const char* filepath, bool* running, DWORD* exitcode) {
 
 	char loaderCommand[dudecmdlen] = { 0 };
-	//sprintf_s(loaderCommand, "avrdude.exe -v -p%s -c%s -P %s -b%s -D -U flash:w:\"%s\":a", use_mcu, use_prog, use_port, use_speed, filepath);
 
-	//char loaderCommand[] = "C:/Users/ralfk/.platformio/penv/Scripts/python.exe C:/Users/ralfk/.platformio/packages/tool-esptoolpy/esptool.py write_flash 0x0000 C:/_PlatformIO/MobiFlight-FirmwareSource/.pio/build/mobiflight_esp32_s2_mini/mobiflight_esp32_s2_mini_merged_0_0_1.bin";
-	sprintf_s(loaderCommand, "C:/Users/ralfk/.platformio/penv/Scripts/python.exe C:/Users/ralfk/.platformio/packages/tool-esptoolpy/esptool.py write_flash 0x0000 %s", filepath);
-
-	// MessageBox(NULL, loaderCommand, "About...", 0);		// undefine this to get message window with commands
+	sprintf_s(loaderCommand, "%sESP-tool/Scripts/python.exe %s/ESP-tool/tool-esptoolpy/esptool.py write_flash 0x0000 %s", fullPath, fullPath, filepath);
+	
+	//MessageBox(NULL, loaderCommand, "About...", 0);		// undefine this to get message window with commands
 
 	STARTUPINFO stinf = { 0 };
 	stinf.cb = sizeof(stinf);
