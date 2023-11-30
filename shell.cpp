@@ -9,7 +9,7 @@ void launcherAVR(const TCHAR* fullPath, const char* use_mcu, const char* use_pro
 	char loaderCommand[dudecmdlen] = {0};
 	sprintf_s(loaderCommand, "%sAVRDude/avrdude.exe -v -p%s -c%s -P %s -b%s -D -U flash:w:\"%s\":a", fullPath, use_mcu, use_prog, use_port, use_speed, filepath);
 
-	MessageBox(NULL, loaderCommand, "About...", 0);		// undefine this to get message window with commands for AVRdude
+	//MessageBox(NULL, loaderCommand, "About...", 0);		// undefine this to get message window with commands for AVRdude
 
 	STARTUPINFO stinf = {0};
 	stinf.cb = sizeof(stinf);
