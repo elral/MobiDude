@@ -8,10 +8,10 @@ void launchProgrammer(const TCHAR* fullPath, const char* use_programmer, const c
 	
 	char loaderCommand[dudecmdlen] = {0};
 	if (!strcmp(use_programmer, "AVRDude")) {
-		sprintf_s(loaderCommand, "%sAVRDude/avrdude.exe -v -p%s -c%s -P %s -b%s -D -U flash:w:\"%s\":a", fullPath, use_mcu, use_prog, use_port, use_speed, filepath);
+		sprintf_s(loaderCommand, "%sAVRDude\\avrdude.exe -v -p%s -c%s -P %s -b%s -D -U flash:w:\"%s\":a", fullPath, use_mcu, use_prog, use_port, use_speed, filepath);
 	}
 	else if (!strcmp(use_programmer, "ESP32tool")) {
-		sprintf_s(loaderCommand, "%sESP-tool/Scripts/python.exe %s/ESP-tool/tool-esptoolpy/esptool.py write_flash 0x0000 %s", fullPath, fullPath, filepath);
+		sprintf_s(loaderCommand, "%sESP-tool\\Scripts\\python.exe %sESP-tool\\tool-esptoolpy\\esptool.py write_flash 0x0000 %s", fullPath, fullPath, filepath);
 	}
 
 	//MessageBox(NULL, loaderCommand, "About...", 0);		// undefine this to get message window with commands for AVRdude
@@ -24,7 +24,6 @@ void launchProgrammer(const TCHAR* fullPath, const char* use_programmer, const c
 	if (CreateProcess(NULL, loaderCommand, NULL, NULL, FALSE, CREATE_DEFAULT_ERROR_MODE, NULL, NULL, &stinf, &prcinf)) {
 
       if(WaitForSingleObject(prcinf.hProcess, dude_run_timeout) == WAIT_TIMEOUT){
-      	
       	TerminateProcess(prcinf.hProcess, EC_DUDE_TIMEOUT);
 	  }
 
