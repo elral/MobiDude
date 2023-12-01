@@ -116,7 +116,7 @@
     <None Include="readme.md" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="info\interface-101.jpg" />
+    <Image Include="info\interface-103.jpg" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

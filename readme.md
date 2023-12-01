@@ -11,7 +11,7 @@ Features:
 - Sometimes the ProMicro gets a time out from AVRDude. In this case just start again flashing
 - ESP32 must **not** be in bootloader mode for now
 
-<img src="info/interface-102.jpg" width="356"/>
+<img src="info/interface-103.jpg" width="356"/>
 
 
 ## List of arduino boards

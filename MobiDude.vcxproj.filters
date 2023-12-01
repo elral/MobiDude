@@ -49,7 +49,7 @@
     <None Include="readme.md" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="info\interface-101.jpg">
+    <Image Include="info\interface-103.jpg">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>
