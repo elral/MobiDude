@@ -20,5 +20,6 @@ std::vector <arduinoboard> db_arduino = {
 	{"Nano old Bootloader", "atmega328p", "AVRDude", "arduino", "57600"},
 	{"Mini", "atmega328p", "AVRDude", "arduino", "115200"},
 	{"Pro/Mini", "atmega328p", "AVRDude", "arduino", "57600"},
+	{"------", "", "none", "", ""},
 	{"ESP32-S2-mini", "ESP32-S2", "ESP32tool", "", ""}
 };

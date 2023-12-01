@@ -245,6 +245,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 							break;
 						}
 						case GUI_BTN_FLASH:{
+							if (!strcmp(db_arduino[sel_board].programmer.c_str(), "none"))
+							{
+								break;
+							}
 							//	zero times							
 							waitToFlash = 0;
 							
@@ -312,57 +316,27 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 
 								fSuccess = SetCommState(hCom, &dcb);
 
-								if (!strcmp(db_arduino[sel_board].mcu.c_str(), "atmega32u4")) {
-									if (!fSuccess)
-									{
-										MessageBox(NULL, "SetCommState failed with error", "Open COM port", MB_ICONINFORMATION | MB_OK);
-									}
+								// wait to appear new COM port
+								Sleep(1500);
 
-									//  Get the comm config again.
-									fSuccess = GetCommState(hCom, &dcb);
-
-									if (!fSuccess)
-									{
-										MessageBox(NULL, "GetCommState failed with error", "Open COM port", MB_ICONINFORMATION | MB_OK);
-										break;
-									}
-
-									// wait to appear new COM port
-									Sleep(1500);
-
-									// and get the new COM port
-									getPorts(&serialPortsProMicro);
-									u_int i = 0;
-									// check which is the new one
-									while (!strcmp(serialPorts[i].c_str(), serialPortsProMicro[i].c_str()) && i < serialPortsProMicro.size())
-									{
-										i++;
-										if (i == serialPortsProMicro.size()) break;
-									}
-									if (i < serialPortsProMicro.size())		// COM port has changed, so ProMicro is NOT already in bootloader mode
-									{
-										serialport = serialPortsProMicro[i].c_str();
-									}
+								// and get the new COM port
+								getPorts(&serialPortsProMicro);
+								u_int i = 0;
+								// check which is the new one
+								while (!strcmp(serialPorts[i].c_str(), serialPortsProMicro[i].c_str()) && i < serialPortsProMicro.size())
+								{
+									i++;
+									if (i == serialPortsProMicro.size()) break;
 								}
-								else if (!strcmp(db_arduino[sel_board].programmer.c_str(), "ESP32tool")) {
-									// why does the ESP32 gets an error message for open the port??
-									// but it seems that the bootloader gets activates!??
-									/*
-									if (!fSuccess)
-									{
-										MessageBox(NULL, "SetCommState failed with error", "Open COM port", MB_ICONINFORMATION | MB_OK);
-									}
-									*/
-									Sleep(1000);
+								if (i < serialPortsProMicro.size())		// COM port has changed, so ProMicro is NOT already in bootloader mode
+								{
+									serialport = serialPortsProMicro[i].c_str();
 								}
 							}
 
-							if (!strcmp(db_arduino[sel_board].programmer.c_str(), "AVRDude") || !strcmp(db_arduino[sel_board].programmer.c_str(), "ESP32tool")) {
-								worker = std::thread(launchProgrammer, FinalPath, db_arduino[sel_board].programmer.c_str(), db_arduino[sel_board].mcu.c_str(), db_arduino[sel_board].ldr.c_str(), db_arduino[sel_board].speed.c_str(), serialport, filepath, &inProgress, &dudeStat);
-								break;
-							} else {
-								MessageBox(NULL, "Error! Wrong processor!", "About...", 0);
-							}
+							worker = std::thread(launchProgrammer, FinalPath, db_arduino[sel_board].programmer.c_str(), db_arduino[sel_board].mcu.c_str(), db_arduino[sel_board].ldr.c_str(), db_arduino[sel_board].speed.c_str(), serialport, filepath, &inProgress, &dudeStat);
+							break;
+
 						}
 						
 						case GUI_BTN_CANCEL:{
@@ -374,9 +348,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 							else if (!strcmp(db_arduino[sel_board].programmer.c_str(), "ESP32tool")) {
 								killProcessByName("python.exe");
 							}
-							
-        					waitToFlash = 0;
-							
 							break;
 						}
 
@@ -433,7 +404,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 				}
 			}
 			else{
-				
+
         		//	step pbar forward
         		SendMessage(progbar_flash, PBM_STEPIT, 0, 0);
         		waitToFlash++;
@@ -444,7 +415,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 
 		case WM_DESTROY: {
 			
-			//	kill avrdude if its running and exit
+			//	kill avrdude or esptool if its running and exit
 			killProcessByName("avrdude.exe");
 			killProcessByName("python.exe");
 			PostQuitMessage(0);
