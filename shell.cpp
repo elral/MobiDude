@@ -14,7 +14,7 @@ void launchProgrammer(const TCHAR* fullPath, const char* use_programmer, const c
 		sprintf_s(loaderCommand, "%sESP-tool/Scripts/python.exe %s/ESP-tool/tool-esptoolpy/esptool.py write_flash 0x0000 %s", fullPath, fullPath, filepath);
 	}
 
-	MessageBox(NULL, loaderCommand, "About...", 0);		// undefine this to get message window with commands for AVRdude
+	//MessageBox(NULL, loaderCommand, "About...", 0);		// undefine this to get message window with commands for AVRdude
 
 	STARTUPINFO stinf = {0};
 	stinf.cb = sizeof(stinf);

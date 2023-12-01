@@ -401,7 +401,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
         		//	show messages
         		if(dudeStat == 0){
         			SendMessage(progbar_flash, PBM_SETPOS, progbar_steps, 0);
-        			MessageBox(NULL, "Firmware successfully uploaded","avrdude done", MB_ICONINFORMATION | MB_OK);
+        			MessageBox(NULL, "Firmware successfully uploaded","Programmer done", MB_ICONINFORMATION | MB_OK);
 					PostQuitMessage(0);
 				}
 				else{
@@ -410,17 +410,17 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 					switch(dudeStat){
 						
 						case EC_DUDE_MAIN:{
-							MessageBox(NULL, "Port or device is inaccessible","avrdude error", MB_ICONEXCLAMATION | MB_OK);
+							MessageBox(NULL, "Port or device is inaccessible","Programmer error", MB_ICONEXCLAMATION | MB_OK);
 							break;
 						}
 						
 						case EC_DUDE_TIMEOUT:{
-							MessageBox(NULL, "Connection timed out","avrdude error", MB_ICONERROR | MB_OK);
+							MessageBox(NULL, "Connection timed out","Programmer error", MB_ICONERROR | MB_OK);
 							break;
 						}
 						
 						case EC_DUDE_NOEXEC:{
-							MessageBox(NULL, "Unable to start avrdude","avrdude error", MB_ICONERROR | MB_OK);
+							MessageBox(NULL, "Unable to start Programmer","Programmer error", MB_ICONERROR | MB_OK);
 							break;
 						}
 					}
