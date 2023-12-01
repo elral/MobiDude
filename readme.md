@@ -1,6 +1,6 @@
 # AVR Firmware Uploader
 
-December 01 2023 - v1.0.3
+December 01 2023 - v1.0.4
 
 Yes, it's just a simple GUI for avrdude and ESP32tool.
 
