@@ -264,7 +264,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 							serialport = serialPorts[sel_com].c_str();
 							
 							// it's an ProMicro or ESP32-S2, entering bootloader will change the serial port
-							if (!strcmp(db_arduino[sel_board].mcu.c_str(), "atmega32u4") || !strcmp(db_arduino[sel_board].architecture.c_str(), "ESP32")) {
+							if (!strcmp(db_arduino[sel_board].mcu.c_str(), "atmega32u4") || !strcmp(db_arduino[sel_board].programmer.c_str(), "ESP32tool")) {
 								// open serial port with 1200 Baud to enter bootloader
 								DCB dcb;
 								HANDLE hCom;
@@ -344,7 +344,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 										serialport = serialPortsProMicro[i].c_str();
 									}
 								}
-								else if (!strcmp(db_arduino[sel_board].architecture.c_str(), "ESP32")) {
+								else if (!strcmp(db_arduino[sel_board].programmer.c_str(), "ESP32tool")) {
 									// why does the ESP32 gets an error message for open the port??
 									// but it seems that the bootloader gets activates!??
 									/*
@@ -357,11 +357,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 								}
 							}
 
-							if (!strcmp(db_arduino[sel_board].architecture.c_str(), "AVR")) {
-								worker = std::thread(launcherAVR, FinalPath, db_arduino[sel_board].mcu.c_str(), db_arduino[sel_board].ldr.c_str(), db_arduino[sel_board].speed.c_str(), serialport, filepath, &inProgress, &dudeStat);
-								break;
-							} else if (!strcmp(db_arduino[sel_board].architecture.c_str(), "ESP32")) {
-								worker = std::thread(launcherESP32_S2, FinalPath, db_arduino[sel_board].mcu.c_str(), db_arduino[sel_board].ldr.c_str(), db_arduino[sel_board].speed.c_str(), serialport, filepath, &inProgress, &dudeStat);
+							if (!strcmp(db_arduino[sel_board].programmer.c_str(), "AVRDude") || !strcmp(db_arduino[sel_board].programmer.c_str(), "ESP32tool")) {
+								worker = std::thread(launchProgrammer, FinalPath, db_arduino[sel_board].programmer.c_str(), db_arduino[sel_board].mcu.c_str(), db_arduino[sel_board].ldr.c_str(), db_arduino[sel_board].speed.c_str(), serialport, filepath, &inProgress, &dudeStat);
 								break;
 							} else {
 								MessageBox(NULL, "Error! Wrong processor!", "About...", 0);
