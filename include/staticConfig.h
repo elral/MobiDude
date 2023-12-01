@@ -2,7 +2,7 @@
 
 #define VER_AUTHSTAMP		"2022 elral"
 
-#define windowSizeX			360
+#define windowSizeX			400
 #define windowSizeY			360
 
 #define scanPorts			64
