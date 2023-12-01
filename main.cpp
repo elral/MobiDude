@@ -368,7 +368,13 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 						case GUI_BTN_CANCEL:{
 							
 							//	cancel upload
-							killProcessByName("avrdude.exe");
+							if (!strcmp(db_arduino[sel_board].programmer.c_str(), "AVRDude")) {
+								killProcessByName("avrdude.exe");
+							}
+							else if (!strcmp(db_arduino[sel_board].programmer.c_str(), "ESP32tool")) {
+								killProcessByName("python.exe");
+							}
+							
         					waitToFlash = 0;
 							
 							break;
@@ -440,6 +446,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 			
 			//	kill avrdude if its running and exit
 			killProcessByName("avrdude.exe");
+			killProcessByName("python.exe");
 			PostQuitMessage(0);
 			break;
 		}
@@ -479,7 +486,7 @@ bool openfile(char* filepath, char* filename){
 		ofn.hwndOwner = NULL; 
 		ofn.lpstrFile = file; 
 		ofn.nMaxFile = MAX_PATH; 
-		ofn.lpstrFilter = ("Intel HEX\0*.hex\0bin files\0*.bin\0All files\0*.*\0"); 
+		ofn.lpstrFilter = ("Intel HEX;bin files\0*.hex;*bin\0Intel HEX\0*.hex\0bin files\0*.bin\0All files\0*.*\0"); 
 		ofn.nFilterIndex = 1; 
 		ofn.lpstrFileTitle = NULL; 
 		ofn.nMaxFileTitle = 0; 
