@@ -47,9 +47,10 @@
   <ItemGroup>
     <None Include="build-win\MobiDude-1.0.0.zip" />
     <None Include="readme.md" />
+    <None Include="build-win\MobiDude-1.0.4.zip" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="info\interface-103.jpg">
+    <Image Include="info\interface-104.jpg">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

@@ -11,7 +11,7 @@ Features:
 - Sometimes the ProMicro gets a time out from AVRDude. In this case just start again flashing
 - ESP32 must **not** be in bootloader mode for now
 
-<img src="info/interface-103.jpg" width="356"/>
+<img src="info/interface-104.jpg" width="356"/>
 
 
 ## List of arduino boards
@@ -41,4 +41,4 @@ With version 1.0.2 of the EEPROM clear hex files the build in LED of the Arduino
 Just download the zip package, extract it in an own folder and run MobiDude.exe
 
 
-[Download package 📦](build-win/MobiDude-1.0.3.zip)
+[Download package 📦](build-win/MobiDude-1.0.4.zip)
