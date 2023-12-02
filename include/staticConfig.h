@@ -38,4 +38,4 @@
 
 #define configFileHeader	"#AVRBINARYUPLOADCONFIGFILE\nBIN="
 
-#define PRODUCT_NAME		"MobiDude Firmware Uploader 1.0.4"
+#define PRODUCT_NAME		"MobiDude Firmware Uploader 1.0.5"

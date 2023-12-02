@@ -114,10 +114,11 @@
   <ItemGroup>
     <None Include="build-win\MobiDude-1.0.0.zip" />
     <None Include="build-win\MobiDude-1.0.4.zip" />
+    <None Include="build-win\MobiDude-1.0.5.zip" />
     <None Include="readme.md" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="info\interface-104.jpg" />
+    <Image Include="info\interface-105.jpg" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
