@@ -127,7 +127,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 			//	abort if there is no serial ports
 			if(!getPorts(&serialPorts)){
 				
-				MessageBox(NULL, "No serial ports was found on this PC","No COM ports", MB_ICONINFORMATION | MB_OK);
+				MessageBox(NULL, "No serial port was found on this PC","No COM ports", MB_ICONINFORMATION | MB_OK);
 				PostQuitMessage(0);
 			}
 			
@@ -249,6 +249,15 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 							{
 								break;
 							}
+							if (!strcmp(db_arduino[sel_board].mcu.c_str(), "ESP32-S2"))
+							{
+								std::string checkFileName = filename;
+								if (checkFileName.find("merged") > strlen(filename)) {
+									MessageBox(NULL, "Please choose a merged .bin File!", "Programmer error", MB_ICONEXCLAMATION | MB_OK);
+									break;
+								}
+							}
+
 							//	zero times							
 							waitToFlash = 0;
 							
@@ -388,7 +397,12 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 					switch(dudeStat){
 						
 						case EC_DUDE_MAIN:{
-							MessageBox(NULL, "Port or device is inaccessible","Programmer error", MB_ICONEXCLAMATION | MB_OK);
+							if (!strcmp(db_arduino[sel_board].programmer.c_str(), "AVRDude")) {
+								MessageBox(NULL, "Port or device is inaccessible","Programmer error", MB_ICONEXCLAMATION | MB_OK);
+							}
+							else if (!strcmp(db_arduino[sel_board].programmer.c_str(), "ESP32tool")) {
+								MessageBox(NULL, "Can't leaving Bootloader\nPlease do a manuel reset", "Programmer Info", MB_ICONEXCLAMATION | MB_OK);
+							}
 							break;
 						}
 						
