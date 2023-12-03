@@ -21,5 +21,5 @@ std::vector <arduinoboard> db_arduino = {
 	{"Mini", "atmega328p", "AVRDude", "arduino", "115200"},
 	{"Pro/Mini", "atmega328p", "AVRDude", "arduino", "57600"},
 	{"------", "", "none", "", ""},
-	{"ESP32-S2-mini", "ESP32-S2", "ESP32tool", "", ""}
+	{"ESP32-S2/S3", "ESP32-S2", "ESP32tool", "", ""}
 };
