@@ -97,6 +97,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 	static HWND btn_openfile;
 	static HWND btn_flash;
 	static HWND btn_terminal;
+	static HWND btn_getInfo;
 	static HWND btn_help;
 	static HWND btn_canc;
 	static HWND progbar_flash;
@@ -114,6 +115,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 	static DWORD terminalStat = 0;
 	static bool terminalRunning = false;
 	static bool terminalStarted = false;
+	static bool getInfoRunning = false;
+	static bool getInfoStarted = false;
 	
 	//GetfullPath(1024, fullPath);
 	GetModuleFileName(NULL, fullPath, MAX_PATH);
@@ -175,10 +178,13 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 				}
 			
 			//	upload button
-			btn_flash = CreateWindow("BUTTON", "Upload", WS_VISIBLE | WS_CHILD, 50, 270, 80, 25, hwnd, (HMENU)GUI_BTN_FLASH, NULL, NULL);
+			btn_flash = CreateWindow("BUTTON", "Upload", WS_VISIBLE | WS_CHILD, 30, 270, 80, 25, hwnd, (HMENU)GUI_BTN_FLASH, NULL, NULL);
 
 			//	terminal button
-			btn_terminal = CreateWindow("BUTTON", "Terminal", WS_VISIBLE | WS_CHILD, 180, 270, 80, 25, hwnd, (HMENU)GUI_BTN_TERMINAL, NULL, NULL);
+			btn_terminal = CreateWindow("BUTTON", "Terminal", WS_VISIBLE | WS_CHILD, 240, 270, 80, 25, hwnd, (HMENU)GUI_BTN_TERMINAL, NULL, NULL);
+
+			//	getInfo button
+			btn_getInfo = CreateWindow("BUTTON", "Get Info", WS_VISIBLE | WS_CHILD, 130, 270, 80, 25, hwnd, (HMENU)GUI_BTN_GETINFO, NULL, NULL);
 				
 			//	cancel button
 			btn_canc = CreateWindow("STATIC", NULL, SS_BITMAP | WS_CHILD | WS_VISIBLE | SS_NOTIFY, 300, 270, 24, 24, hwnd, (HMENU)GUI_BTN_CANCEL, NULL, NULL);
@@ -273,6 +279,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 							ShowWindow(progbar_flash, true);
 							ShowWindow(btn_canc, true);
 							ShowWindow(btn_terminal, false);
+							ShowWindow(btn_getInfo, false);
 							
 							//	step progress bar
 							SendMessage(progbar_flash, PBM_SETPOS, 0, 0);
@@ -359,17 +366,55 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 						}
 
 						case GUI_BTN_TERMINAL: {
-							const char* serialport;
-							serialport = serialPorts[sel_com].c_str();
-							EnableWindow(GetDlgItem(hwnd, GUI_BTN_TERMINAL), false);
 							SetTimer(hwnd, ID_TIMER_TERMINAL, progbar_timer_step, NULL);
+							EnableWindow(GetDlgItem(hwnd, GUI_BTN_TERMINAL), false);
 							EnableWindow(GetDlgItem(hwnd, GUI_BTN_FLASH), false);
+							EnableWindow(GetDlgItem(hwnd, GUI_BTN_GETINFO), false);
 							terminalRunning = true;
 							terminalStarted = true;
-							workerTerminal = std::thread(launchTerminal, FinalPath, serialport, &terminalStat, &terminalRunning);
+							workerTerminal = std::thread(launchTerminal, FinalPath, serialPorts[sel_com].c_str(), &terminalStat, &terminalRunning);
 							break;
 						}
 						
+						case GUI_BTN_GETINFO: {
+							// open serial port
+							BOOL fSuccess;
+							HANDLE hCom = openCOMport(serialPorts[sel_com]);
+							Sleep(2000);
+
+							char *SerialBuffer;
+							char *NameBuffer;
+							char *TypeBuffer;
+							char* VersionFW;
+							char* VersionCore;
+							char MessageBuffer[2048] = { 0 };
+							char ConfigBuffer[1024] = { 0 };
+
+							// send "9;" to get Board Info
+							sendCharactersToCom(hCom, "9;", 2);
+							Sleep(100);
+							if (getCommandFromCom(hCom, MessageBuffer) == 17)
+								getCommandFromCom(hCom, MessageBuffer);
+							NameBuffer = strtok(MessageBuffer, ",");
+							TypeBuffer = strtok(NULL, ",");
+							SerialBuffer = strtok(NULL, ",");
+							VersionFW = strtok(NULL, ",");
+							VersionCore = strtok(NULL, ";");
+						
+							// send "12;" to get Config
+							sendCharactersToCom(hCom, "12;", 3);
+							Sleep(100);
+							getCommandFromCom(hCom, ConfigBuffer);
+						
+							CloseHandle(hCom);
+
+							sprintf(MessageBuffer, "%s\r%s\r%s\r%s\r%s\r\r%s", NameBuffer, TypeBuffer, SerialBuffer, VersionFW, VersionCore, ConfigBuffer);
+
+							MessageBox(NULL, MessageBuffer, "Get Board Info", MB_ICONINFORMATION | MB_OK);
+
+							break;
+						}
+
 						case GUI_BTN_CANCEL:{
 							
 							//	cancel upload
@@ -396,12 +441,24 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 				workerTerminal.join();
 				KillTimer(hwnd, ID_TIMER_TERMINAL);
 				EnableWindow(GetDlgItem(hwnd, GUI_BTN_TERMINAL), true);
+				EnableWindow(GetDlgItem(hwnd, GUI_BTN_GETINFO), true);
 				if (strlen(filename) > 2) {
 					EnableWindow(GetDlgItem(hwnd, GUI_BTN_FLASH), true);
 				}
 				terminalStarted = false;
 			}
-
+/*
+			if (!getInfoRunning && getInfoStarted) {
+				workerTerminal.join();
+				KillTimer(hwnd, ID_TIMER_TERMINAL);
+				EnableWindow(GetDlgItem(hwnd, GUI_BTN_TERMINAL), true);
+				EnableWindow(GetDlgItem(hwnd, GUI_BTN_GETINFO), true);
+				if (strlen(filename) > 2) {
+					EnableWindow(GetDlgItem(hwnd, GUI_BTN_FLASH), true);
+				}
+				getInfoStarted = false;
+			}
+*/
         	if(!inProgress && programerStarted){
         		//	stop routine
 				workerProgramer.join();
@@ -449,7 +506,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 					}
 				}
 			}
-			else{
+			else {
 
         		//	step pbar forward
         		SendMessage(progbar_flash, PBM_STEPIT, 0, 0);

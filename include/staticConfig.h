@@ -30,6 +30,7 @@
 
 #define ID_TIMER_AVRDUDE	13
 #define ID_TIMER_TERMINAL   14
+#define ID_TIMER_GETINFO    15
 
 #define GUI_GROUP_MAIN		25
 #define GUI_STAT_TIP_MCU	26
@@ -40,8 +41,9 @@
 #define GUI_BTN_OPEN		31
 #define GUI_BTN_FLASH		32
 #define GUI_BTN_TERMINAL	33
-#define GUI_BTN_CANCEL		34
-#define GUI_GROUP_LAST		35
+#define GUI_BTN_GETINFO     34
+#define GUI_BTN_CANCEL		35
+#define GUI_GROUP_LAST		36
 
 
 #define configFileHeader	"#AVRBINARYUPLOADCONFIGFILE\nBIN="
