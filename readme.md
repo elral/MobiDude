@@ -1,6 +1,6 @@
 # AVR Firmware Uploader
 
-December 01 2023 - v1.0.5
+October 18 2024 - v1.0.6
 
 Yes, it's just a simple GUI for avrdude and ESP32tool.
 
@@ -11,10 +11,11 @@ Features:
 - Sometimes the ProMicro gets a time out from AVRDude. In this case just start again flashing
 - ESP32 must **not** be in bootloader mode for now
 
-<img src="info/interface-105.jpg" width="356"/>
+<img src="info/interface-106.jpg" width="356"/>
 
 
 ## List of arduino boards
+
 - Arduino Mega2560
 - ProMicro
 - Uno
@@ -24,6 +25,7 @@ Features:
 - ESP32-S2-mini
 
 ## Erase EEPROM
+
 For the above mentioned boards also an erase EEPROM .hex file is included.
 Choose the file according your board.
 If you upload this firmware, the existing firmware and the eeprom content will be erased.
@@ -31,14 +33,26 @@ Afterwords upload your firmware file again.
 
 With version 1.0.2 of the EEPROM clear hex files the build in LED of the Arduinos will blink after clearing the EEPROM
 
+## Dump EEPROM
+
+For the above mentioned boards also a dump EEPROM .hex file is included.
+Choose the file according your board.
+If you upload this firmware, the existing firmware will be erased but the EEPROM content will not be changed.
+Afterwords upload your firmware file again.
+
+## Terminal
+
+A terminal program is included to communicate with the board via a serial connection. This can be used also for boards which are not listed above but the Mobiflight firmware is running on.
+
 ---
 
 ### This package includes next open-source binaries:
 
  - avrdude 6.3.0 which is included in the download file under build-win
  - ESP32 tool and python package from platformIO
+ - Putty as standalone program
 
 Just download the zip package, extract it in an own folder and run MobiDude.exe
 
 
-[Download package 📦](build-win/MobiDude-1.0.5.zip)
+[Download package 📦](build-win/MobiDude-1.0.6.zip)

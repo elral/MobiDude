@@ -40,6 +40,31 @@ void launchProgrammer(const TCHAR* fullPath, const char* use_programmer, const c
 	return;
 }
 
+void launchTerminal(const char* fullPath, const char* use_port, DWORD* exitcode, bool* running) {
+
+	char terminalCommand[dudecmdlen] = { 0 };
+	sprintf_s(terminalCommand, "%sPuTTYPortable\\PuTTYPortable.exe -serial %s -sercfg 115200,8,n,1,N", fullPath, use_port);
+
+	//MessageBox(NULL, terminalCommand, "About...", 0);
+
+	STARTUPINFO stinf = { 0 };
+	stinf.cb = sizeof(stinf);
+	PROCESS_INFORMATION prcinf = { 0 };
+
+	if (CreateProcess(NULL, terminalCommand, NULL, NULL, FALSE, CREATE_DEFAULT_ERROR_MODE, NULL, NULL, &stinf, &prcinf)) {
+		WaitForSingleObject(prcinf.hProcess, INFINITE);
+		GetExitCodeProcess(prcinf.hProcess, exitcode);
+		CloseHandle(prcinf.hThread);
+		CloseHandle(prcinf.hProcess);
+	}
+	else {
+		*exitcode = EC_TERMINAL_NOEXEC;
+	}
+	*running = false;
+
+	return;
+}
+
 void killProcessByName(const char *filename){
 	
     HANDLE hSnapShot = CreateToolhelp32Snapshot(TH32CS_SNAPALL, 0);
