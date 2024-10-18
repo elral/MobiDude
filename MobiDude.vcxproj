@@ -120,7 +120,7 @@
     <None Include="readme.md" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="info\interface-105.jpg" />
+    <Image Include="info\interface-106.jpg" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
