@@ -44,6 +44,9 @@
     <ClInclude Include="include\FileHandling.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include=".github\workflows\release.yml">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resource.rc">

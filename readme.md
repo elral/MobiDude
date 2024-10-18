@@ -15,6 +15,7 @@ Features:
 
 
 ## List of arduino boards
+
 - Arduino Mega2560
 - ProMicro
 - Uno
@@ -24,6 +25,7 @@ Features:
 - ESP32-S2-mini
 
 ## Erase EEPROM
+
 For the above mentioned boards also an erase EEPROM .hex file is included.
 Choose the file according your board.
 If you upload this firmware, the existing firmware and the eeprom content will be erased.
@@ -32,12 +34,14 @@ Afterwords upload your firmware file again.
 With version 1.0.2 of the EEPROM clear hex files the build in LED of the Arduinos will blink after clearing the EEPROM
 
 ## Dump EEPROM
+
 For the above mentioned boards also a dump EEPROM .hex file is included.
 Choose the file according your board.
 If you upload this firmware, the existing firmware will be erased but the EEPROM content will not be changed.
 Afterwords upload your firmware file again.
 
 ## Terminal
+
 A terminal program is included to communicate with the board via a serial connection. This can be used also for boards which are not listed above but the Mobiflight firmware is running on.
 ---
 
