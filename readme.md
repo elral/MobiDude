@@ -43,6 +43,7 @@ Afterwords upload your firmware file again.
 ## Terminal
 
 A terminal program is included to communicate with the board via a serial connection. This can be used also for boards which are not listed above but the Mobiflight firmware is running on.
+
 ---
 
 ### This package includes next open-source binaries:
