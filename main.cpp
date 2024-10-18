@@ -447,18 +447,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 				}
 				terminalStarted = false;
 			}
-/*
-			if (!getInfoRunning && getInfoStarted) {
-				workerTerminal.join();
-				KillTimer(hwnd, ID_TIMER_TERMINAL);
-				EnableWindow(GetDlgItem(hwnd, GUI_BTN_TERMINAL), true);
-				EnableWindow(GetDlgItem(hwnd, GUI_BTN_GETINFO), true);
-				if (strlen(filename) > 2) {
-					EnableWindow(GetDlgItem(hwnd, GUI_BTN_FLASH), true);
-				}
-				getInfoStarted = false;
-			}
-*/
+
         	if(!inProgress && programerStarted){
         		//	stop routine
 				workerProgramer.join();
@@ -472,6 +461,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 				ShowWindow(progbar_flash, false);
 				ShowWindow(btn_flash, true);
 				ShowWindow(btn_terminal, true);
+				ShowWindow(btn_getInfo, true);
         		
         		//	show messages
         		if(dudeStat == 0){
