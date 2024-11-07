@@ -193,7 +193,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 			}
 			
 			//	grey out inactive buttons
-			EnableWindow(GetDlgItem(hwnd, GUI_BTN_FLASH), false);
+		//	EnableWindow(GetDlgItem(hwnd, GUI_BTN_FLASH), false);
 			
 			//	hide in-process controls
 			ShowWindow(btn_canc, false);
@@ -229,7 +229,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 							if(openfile(filepath, filename)){
 								//	display file name
 								char showfilename[binfilenamelen];
-								strcpy_s(showfilename, "File: ");
+						//		strcpy_s(showfilename, "File: ");
 								strcpy_s(showfilename, filename);
 								//	show buttons
 								SetWindowText(stc_filename, showfilename);
@@ -247,6 +247,11 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 						case GUI_BTN_FLASH:{
 							if (!strcmp(db_arduino[sel_board].programmer.c_str(), "none"))
 							{
+								break;
+							}
+							if (strlen(filename) == 0 && strcmp(db_arduino[sel_board].board.c_str(),"Raspberry Pico"))
+							{
+								MessageBox(NULL, "Please choose a Filename", "Programmer error", MB_ICONEXCLAMATION | MB_OK);
 								break;
 							}
 							if (!strcmp(db_arduino[sel_board].mcu.c_str(), "ESP32-S2"))
@@ -277,7 +282,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 							serialport = serialPorts[sel_com].c_str();
 							
 							// it's an ProMicro or ESP32-S2, entering bootloader will change the serial port
-							if (!strcmp(db_arduino[sel_board].mcu.c_str(), "atmega32u4") || !strcmp(db_arduino[sel_board].programmer.c_str(), "ESP32tool")) {
+							if (!strcmp(db_arduino[sel_board].mcu.c_str(), "atmega32u4") || !strcmp(db_arduino[sel_board].programmer.c_str(), "ESP32tool") || !strcmp(db_arduino[sel_board].programmer.c_str(), "Picotool")) {
 								// open serial port with 1200 Baud to enter bootloader
 								DCB dcb;
 								HANDLE hCom;
@@ -325,6 +330,13 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 
 								fSuccess = SetCommState(hCom, &dcb);
 
+								if (!strcmp(db_arduino[sel_board].board.c_str(), "Raspberry Pico"))
+								{
+									killProcessByName("avrdude.exe");
+									killProcessByName("python.exe");
+									PostQuitMessage(0);
+									break;
+								}
 								// wait to appear new COM port
 								Sleep(1500);
 
