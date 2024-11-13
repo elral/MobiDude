@@ -10,7 +10,8 @@
 
 #define progbar_steps		1000
 #define progbar_timer_step	30
-#define dude_run_timeout	35000
+// #define dude_run_timeout	35000
+#define dude_run_timeout	60000
 
 #define dudecmdlen			1024
 #define terminalcmdlen		1024
