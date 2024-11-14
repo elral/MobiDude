@@ -58,7 +58,6 @@
     <None Include="readme.md" />
     <None Include="build-win\MobiDude-1.0.4.zip" />
     <None Include="build-win\MobiDude-1.0.5.zip" />
-    <None Include="build-win\MobiDude-1.0.6.zip" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="info\interface-106.jpg">
