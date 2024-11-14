@@ -11,10 +11,10 @@ void launchProgrammer(const TCHAR* fullPath, const char* use_programmer, const c
 		sprintf_s(loaderCommand, "%sAVRDude\\avrdude.exe -v -p%s -c%s -P %s -b%s -D -U flash:w:\"%s\":a", fullPath, use_mcu, use_prog, use_port, use_speed, filepath);
 	}
 	else if (!strcmp(use_programmer, "ESP32tool")) {
-		sprintf_s(loaderCommand, "%sESP-tool\\Scripts\\python.exe %sESP-tool\\tool-esptoolpy\\esptool.py write_flash 0x0000 %s", fullPath, fullPath, filepath);
+	    sprintf_s(loaderCommand, "%sESP-tool\\esptool.exe write_flash 0x0000 %s", fullPath, filepath);
 	}
 
-	//MessageBox(NULL, loaderCommand, "About...", 0);		// undefine this to get message window with commands for AVRdude
+	// MessageBox(NULL, loaderCommand, "About...", 0);		// undefine this to get message window with commands for AVRdude
 
 	STARTUPINFO stinf = {0};
 	stinf.cb = sizeof(stinf);
@@ -37,6 +37,31 @@ void launchProgrammer(const TCHAR* fullPath, const char* use_programmer, const c
 	}
 								
 	*running = false;
+	return;
+}
+
+void launchTerminal(const char* fullPath, const char* use_port, DWORD* exitcode, bool* running) {
+
+	char terminalCommand[dudecmdlen] = { 0 };
+	sprintf_s(terminalCommand, "%sPuTTYPortable\\PuTTYPortable.exe -serial %s -sercfg 115200,8,n,1,N", fullPath, use_port);
+
+	//MessageBox(NULL, terminalCommand, "About...", 0);
+
+	STARTUPINFO stinf = { 0 };
+	stinf.cb = sizeof(stinf);
+	PROCESS_INFORMATION prcinf = { 0 };
+
+	if (CreateProcess(NULL, terminalCommand, NULL, NULL, FALSE, CREATE_DEFAULT_ERROR_MODE, NULL, NULL, &stinf, &prcinf)) {
+		WaitForSingleObject(prcinf.hProcess, INFINITE);
+		GetExitCodeProcess(prcinf.hProcess, exitcode);
+		CloseHandle(prcinf.hThread);
+		CloseHandle(prcinf.hProcess);
+	}
+	else {
+		*exitcode = EC_TERMINAL_NOEXEC;
+	}
+	*running = false;
+
 	return;
 }
 

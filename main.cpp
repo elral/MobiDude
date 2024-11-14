@@ -13,10 +13,8 @@
 #include "include/staticData.h"
 #include "include/serial.h"
 #include "include/shell.h"
+#include "include/FileHandling.h"
 
-
-bool openfile(char* filepath, char* filename);
-bool cutFilePath(const char* filepath, char* filename);
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam);
 HINSTANCE appInstance;
@@ -86,7 +84,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 	
-	static std::thread worker;
+	static std::thread workerProgramer;
+	static std::thread workerTerminal;
 	static std::vector <std::string> serialPorts;
 	static std::vector <std::string> serialPortsProMicro;
 	
@@ -97,6 +96,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 	static HWND box_comport;
 	static HWND btn_openfile;
 	static HWND btn_flash;
+	static HWND btn_terminal;
+	static HWND btn_getInfo;
 	static HWND btn_help;
 	static HWND btn_canc;
 	static HWND progbar_flash;
@@ -109,7 +110,13 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 	
 	static unsigned int waitToFlash = 0;
 	static bool inProgress = false;
+	static bool programerStarted = false;
 	static DWORD dudeStat = 0;
+	static DWORD terminalStat = 0;
+	static bool terminalRunning = false;
+	static bool terminalStarted = false;
+	static bool getInfoRunning = false;
+	static bool getInfoStarted = false;
 	
 	//GetfullPath(1024, fullPath);
 	GetModuleFileName(NULL, fullPath, MAX_PATH);
@@ -171,7 +178,13 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 				}
 			
 			//	upload button
-			btn_flash = CreateWindow("BUTTON", "Upload", WS_VISIBLE | WS_CHILD, 140, 270, 80, 25, hwnd, (HMENU)GUI_BTN_FLASH, NULL, NULL);
+			btn_flash = CreateWindow("BUTTON", "Upload", WS_VISIBLE | WS_CHILD, 30, 270, 80, 25, hwnd, (HMENU)GUI_BTN_FLASH, NULL, NULL);
+
+			//	terminal button
+			btn_terminal = CreateWindow("BUTTON", "Terminal", WS_VISIBLE | WS_CHILD, 240, 270, 80, 25, hwnd, (HMENU)GUI_BTN_TERMINAL, NULL, NULL);
+
+			//	getInfo button
+			btn_getInfo = CreateWindow("BUTTON", "Get Info", WS_VISIBLE | WS_CHILD, 130, 270, 80, 25, hwnd, (HMENU)GUI_BTN_GETINFO, NULL, NULL);
 				
 			//	cancel button
 			btn_canc = CreateWindow("STATIC", NULL, SS_BITMAP | WS_CHILD | WS_VISIBLE | SS_NOTIFY, 300, 270, 24, 24, hwnd, (HMENU)GUI_BTN_CANCEL, NULL, NULL);
@@ -188,7 +201,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 			
 		//	settings	
 			//	set fonts
-			for(int i = GUI_GROUP_MAIN; i <= GUI_BTN_FLASH; i++){
+			for(int i = GUI_GROUP_MAIN; i < GUI_GROUP_LAST; i++){
 				SendDlgItemMessage(hwnd, i, WM_SETFONT, (WPARAM)GetStockObject(DEFAULT_GUI_FONT), MAKELPARAM(TRUE,0));
 			}
 			
@@ -270,13 +283,16 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 							ShowWindow(btn_flash, false);
 							ShowWindow(progbar_flash, true);
 							ShowWindow(btn_canc, true);
+							ShowWindow(btn_terminal, false);
+							ShowWindow(btn_getInfo, false);
 							
 							//	step progress bar
 							SendMessage(progbar_flash, PBM_SETPOS, 0, 0);
-							SetTimer(hwnd, ID_TIMER, progbar_timer_step, NULL);
+							SetTimer(hwnd, ID_TIMER_AVRDUDE, progbar_timer_step, NULL);
 							
 							//	start routine
 							inProgress = true;
+							programerStarted = true;
 							dudeStat = 0;
 							const char* serialport;
 							serialport = serialPorts[sel_com].c_str();
@@ -356,11 +372,61 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 								CloseHandle(hCom);
 							}
 
-							worker = std::thread(launchProgrammer, FinalPath, db_arduino[sel_board].programmer.c_str(), db_arduino[sel_board].mcu.c_str(), db_arduino[sel_board].ldr.c_str(), db_arduino[sel_board].speed.c_str(), serialport, filepath, &inProgress, &dudeStat);
+							workerProgramer = std::thread(launchProgrammer, FinalPath, db_arduino[sel_board].programmer.c_str(), db_arduino[sel_board].mcu.c_str(), db_arduino[sel_board].ldr.c_str(), db_arduino[sel_board].speed.c_str(), serialport, filepath, &inProgress, &dudeStat);
 							break;
 
 						}
+
+						case GUI_BTN_TERMINAL: {
+							SetTimer(hwnd, ID_TIMER_TERMINAL, progbar_timer_step, NULL);
+							EnableWindow(GetDlgItem(hwnd, GUI_BTN_TERMINAL), false);
+							EnableWindow(GetDlgItem(hwnd, GUI_BTN_FLASH), false);
+							EnableWindow(GetDlgItem(hwnd, GUI_BTN_GETINFO), false);
+							terminalRunning = true;
+							terminalStarted = true;
+							workerTerminal = std::thread(launchTerminal, FinalPath, serialPorts[sel_com].c_str(), &terminalStat, &terminalRunning);
+							break;
+						}
 						
+						case GUI_BTN_GETINFO: {
+							// open serial port
+							BOOL fSuccess;
+							HANDLE hCom = openCOMport(serialPorts[sel_com]);
+							Sleep(2000);
+
+							char *SerialBuffer;
+							char *NameBuffer;
+							char *TypeBuffer;
+							char* VersionFW;
+							char* VersionCore;
+							char MessageBuffer[2048] = { 0 };
+							char ConfigBuffer[1024] = { 0 };
+
+							// send "9;" to get Board Info
+							sendCharactersToCom(hCom, "9;", 2);
+							Sleep(100);
+							if (getCommandFromCom(hCom, MessageBuffer) == 17)
+								getCommandFromCom(hCom, MessageBuffer);
+							NameBuffer = strtok(MessageBuffer, ",");
+							TypeBuffer = strtok(NULL, ",");
+							SerialBuffer = strtok(NULL, ",");
+							VersionFW = strtok(NULL, ",");
+							VersionCore = strtok(NULL, ";");
+						
+							// send "12;" to get Config
+							sendCharactersToCom(hCom, "12;", 3);
+							Sleep(100);
+							getCommandFromCom(hCom, ConfigBuffer);
+						
+							CloseHandle(hCom);
+
+							sprintf(MessageBuffer, "%s\r%s\r%s\r%s\r%s\r\r%s", NameBuffer, TypeBuffer, SerialBuffer, VersionFW, VersionCore, ConfigBuffer);
+
+							MessageBox(NULL, MessageBuffer, "Get Board Info", MB_ICONINFORMATION | MB_OK);
+
+							break;
+						}
+
 						case GUI_BTN_CANCEL:{
 							
 							//	cancel upload
@@ -383,25 +449,37 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 		}
 			
         case WM_TIMER:{
-        	
-        	if(!inProgress){
-        		
+			if (!terminalRunning && terminalStarted) {
+				workerTerminal.join();
+				KillTimer(hwnd, ID_TIMER_TERMINAL);
+				EnableWindow(GetDlgItem(hwnd, GUI_BTN_TERMINAL), true);
+				EnableWindow(GetDlgItem(hwnd, GUI_BTN_GETINFO), true);
+				if (strlen(filename) > 2) {
+					EnableWindow(GetDlgItem(hwnd, GUI_BTN_FLASH), true);
+				}
+				terminalStarted = false;
+			}
+
+        	if(!inProgress && programerStarted){
         		//	stop routine
-        		worker.join();
-        			KillTimer(hwnd, ID_TIMER);
-        			waitToFlash = 0;
-        			inProgress = false;
+				workerProgramer.join();
+        		KillTimer(hwnd, ID_TIMER_AVRDUDE);
+        		waitToFlash = 0;
+        		inProgress = false;
+				programerStarted = false;
         		
         		//	switch controls
         		ShowWindow(btn_canc, false);
 				ShowWindow(progbar_flash, false);
 				ShowWindow(btn_flash, true);
+				ShowWindow(btn_terminal, true);
+				ShowWindow(btn_getInfo, true);
         		
         		//	show messages
         		if(dudeStat == 0){
         			SendMessage(progbar_flash, PBM_SETPOS, progbar_steps, 0);
         			MessageBox(NULL, "Firmware successfully uploaded","Programmer done", MB_ICONINFORMATION | MB_OK);
-					PostQuitMessage(0);
+		//			PostQuitMessage(0);
 				}
 				else{
 					SendMessage(progbar_flash, PBM_SETPOS, 0, 0);
@@ -430,7 +508,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 					}
 				}
 			}
-			else{
+			else {
 
         		//	step pbar forward
         		SendMessage(progbar_flash, PBM_STEPIT, 0, 0);
@@ -442,9 +520,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 
 		case WM_DESTROY: {
 			
-			//	kill avrdude or esptool if its running and exit
+			//	kill avrdude, esptool or Putty if its running and exit
 			killProcessByName("avrdude.exe");
 			killProcessByName("python.exe");
+			killProcessByName("PuTTYPortable.exe");
 			PostQuitMessage(0);
 			break;
 		}
@@ -454,51 +533,4 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 	}
 
 	return 0;
-}
-
-
-bool cutFilePath(const char* filepath, char* filename){
-	
-	if(strchr(filepath, '\\') != NULL){
-		
-		const char *slcp = strrchr(filepath, '\\');
-		int slcpos = (int)(slcp - filepath);
-		slcpos++;
-		
-		strcpy(filename, filepath + slcpos);
-	}
-	else{
-		return true;
-	}
-		
-	return false;
-}
-
-
-bool openfile(char* filepath, char* filename){
-	
-	char file[MAX_PATH] = {0};
-	OPENFILENAME ofn = {0}; 
-
-		ofn.lStructSize = sizeof(ofn); 
-		ofn.hwndOwner = NULL; 
-		ofn.lpstrFile = file; 
-		ofn.nMaxFile = MAX_PATH; 
-		ofn.lpstrFilter = ("Intel HEX;bin files\0*.hex;*bin\0Intel HEX\0*.hex\0bin files\0*.bin\0All files\0*.*\0"); 
-		ofn.nFilterIndex = 1; 
-		ofn.lpstrFileTitle = NULL; 
-		ofn.nMaxFileTitle = 0; 
-		ofn.lpstrInitialDir = NULL;
-		ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
-		
-	if(GetOpenFileName(&ofn)){
-
-		strcpy(filepath, file);
-		
-		cutFilePath(filepath, filename);
-		
-		return true;
-	}
-
-	return false;
 }
