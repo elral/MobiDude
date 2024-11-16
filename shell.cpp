@@ -6,6 +6,7 @@
 
 void launchProgrammer(const TCHAR* fullPath, const char* use_programmer, const char* use_mcu, const char* use_prog, const char* use_speed, const char* use_port, const char* filepath, bool* running, DWORD* exitcode){
 	
+	// check https://stackoverflow.com/questions/4053241/windows-api-createprocess-path-with-space
 	char loaderCommand[dudecmdlen] = {0};
 	if (!strcmp(use_programmer, "AVRDude")) {
 		sprintf_s(loaderCommand, "\"%sAVRDude\\avrdude.exe\" -v -p%s -c%s -P %s -b%s -D -U flash:w:\"%s\":a", fullPath, use_mcu, use_prog, use_port, use_speed, filepath);
