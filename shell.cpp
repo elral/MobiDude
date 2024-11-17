@@ -31,7 +31,7 @@ void launchProgrammer(const TCHAR* fullPath, const char* use_programmer, const c
 	//if(CreateProcess(NULL, loaderCommand, NULL, NULL, FALSE, CREATE_NO_WINDOW, NULL, NULL, &stinf, &prcinf)){
 	if (CreateProcess(NULL, loaderCommand, NULL, NULL, FALSE, CREATE_DEFAULT_ERROR_MODE, NULL, NULL, &stinf, &prcinf)) {
 
-      if(WaitForSingleObject(prcinf.hProcess, dude_run_timeout) == WAIT_TIMEOUT){
+      if(WaitForSingleObject(prcinf.hProcess, epstool_run_timeout) == WAIT_TIMEOUT){
       	TerminateProcess(prcinf.hProcess, EC_DUDE_TIMEOUT);
 	  }
 
