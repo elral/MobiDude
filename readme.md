@@ -55,4 +55,4 @@ A terminal program is included to communicate with the board via a serial connec
 Just download the zip package, extract it in an own folder and run MobiDude.exe
 
 
-[Download package 📦](https://github.com/elral/MobiDude/releases/download/1.0.7/MobiDude-1.0.7.zip)
+[Download package 📦](https://github.com/elral/MobiDude/releases/download/1.0.8/MobiDude-1.0.8.zip)
