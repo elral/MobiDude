@@ -6,12 +6,20 @@
 
 void launchProgrammer(const TCHAR* fullPath, const char* use_programmer, const char* use_mcu, const char* use_prog, const char* use_speed, const char* use_port, const char* filepath, bool* running, DWORD* exitcode){
 	
+	// check https://stackoverflow.com/questions/4053241/windows-api-createprocess-path-with-space
+	/*
+	You don't need to specify the application path in both the first and second arguments. According to the MSDN documentation (https://learn.microsoft.com/de-de/windows/win32/api/processthreadsapi/nf-processthreadsapi-createprocessa?redirectedfrom=MSDN)
+	the second argument should be only command line arguments if you list the application name in the first argument.
+	Otherwise, set the first argument to NULL and then 	in the second argument enclose the application name in quotes if it contains a space.
+	The quotes should NOT encapsulate the module pathname passed as the first parameter of CreateProcess.
+	However, quotes SHOULD encapsulate arg0 (again module path) as passed for the command line (second parameter of CreateProcess).
+	*/
 	char loaderCommand[dudecmdlen] = {0};
 	if (!strcmp(use_programmer, "AVRDude")) {
-		sprintf_s(loaderCommand, "%sAVRDude\\avrdude.exe -v -p%s -c%s -P %s -b%s -D -U flash:w:\"%s\":a", fullPath, use_mcu, use_prog, use_port, use_speed, filepath);
+		sprintf_s(loaderCommand, "\"%sAVRDude\\avrdude.exe\" -v -p%s -c%s -P %s -b%s -D -U flash:w:\"%s\":a", fullPath, use_mcu, use_prog, use_port, use_speed, filepath);
 	}
 	else if (!strcmp(use_programmer, "ESP32tool")) {
-	    sprintf_s(loaderCommand, "%sESP-tool\\esptool.exe write_flash 0x0000 %s", fullPath, filepath);
+	    sprintf_s(loaderCommand, "\"%sESP-tool\\esptool.exe\" write_flash 0x0000 \"%s\"", fullPath, filepath);
 	}
 
 	// MessageBox(NULL, loaderCommand, "About...", 0);		// undefine this to get message window with commands for AVRdude
@@ -23,7 +31,7 @@ void launchProgrammer(const TCHAR* fullPath, const char* use_programmer, const c
 	//if(CreateProcess(NULL, loaderCommand, NULL, NULL, FALSE, CREATE_NO_WINDOW, NULL, NULL, &stinf, &prcinf)){
 	if (CreateProcess(NULL, loaderCommand, NULL, NULL, FALSE, CREATE_DEFAULT_ERROR_MODE, NULL, NULL, &stinf, &prcinf)) {
 
-      if(WaitForSingleObject(prcinf.hProcess, dude_run_timeout) == WAIT_TIMEOUT){
+      if(WaitForSingleObject(prcinf.hProcess, epstool_run_timeout) == WAIT_TIMEOUT){
       	TerminateProcess(prcinf.hProcess, EC_DUDE_TIMEOUT);
 	  }
 
