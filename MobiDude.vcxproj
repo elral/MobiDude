@@ -98,11 +98,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="FileHandling.cpp" />
     <ClCompile Include="serial.cpp" />
     <ClCompile Include="shell.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include=".github\workflows\release.yml" />
+    <ClInclude Include="include\FileHandling.h" />
     <ClInclude Include="include\serial.h" />
     <ClInclude Include="include\shell.h" />
     <ClInclude Include="include\staticConfig.h" />
@@ -118,7 +121,7 @@
     <None Include="readme.md" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="info\interface-105.jpg" />
+    <Image Include="info\interface-106.jpg" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

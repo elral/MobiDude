@@ -1,0 +1,23 @@
+name: MobiDude release
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: ZIP files
+          path: ./build-win/*.zip
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          files: ./build-win/*.zip
