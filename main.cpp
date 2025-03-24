@@ -242,7 +242,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 							if(openfile(filepath, filename)){
 								//	display file name
 								char showfilename[binfilenamelen];
-						//		strcpy_s(showfilename, "File: ");
 								strcpy_s(showfilename, filename);
 								//	show buttons
 								SetWindowText(stc_filename, showfilename);
@@ -298,12 +297,15 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 							serialport = serialPorts[sel_com].c_str();
 							
 							// it's an ProMicro or ESP32-S2, entering bootloader will change the serial port
+							// or it's a Pico where the flash drive will appear
 							if (!strcmp(db_arduino[sel_board].mcu.c_str(), "atmega32u4") || !strcmp(db_arduino[sel_board].programmer.c_str(), "ESP32tool") || !strcmp(db_arduino[sel_board].programmer.c_str(), "Picotool")) {
 								// open serial port with 1200 Baud to enter bootloader
 								DCB dcb;
 								HANDLE hCom;
 								BOOL fSuccess;
-								
+
+								DWORD oldDrives = GetCurrentDrives();
+
 								// CAUTION!! filename for COM ports > 9 must be: "\\.\COM15"
 								// this syntax works also for COM ports < 10
 								std::string PortNo = "\\\\.\\" + serialPorts[sel_com];
@@ -346,30 +348,55 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 
 								fSuccess = SetCommState(hCom, &dcb);
 
-								if (!strcmp(db_arduino[sel_board].board.c_str(), "Raspberry Pico"))
-								{
-									killProcessByName("avrdude.exe");
-									killProcessByName("python.exe");
-									PostQuitMessage(0);
-									break;
-								}
 								// wait to appear new COM port
 								Sleep(1500);
+								
+								if (!strcmp(db_arduino[sel_board].board.c_str(), "Raspberry Pico"))
+								{
+									DWORD newDrives = GetCurrentDrives();
 
-								// and get the new COM port
-								getPorts(&serialPortsProMicro);
-								u_int i = 0;
-								// check which is the new one
-								while (!strcmp(serialPorts[i].c_str(), serialPortsProMicro[i].c_str()) && i < serialPortsProMicro.size())
-								{
-									i++;
-									if (i == serialPortsProMicro.size()) break;
+									// Vergleiche die alten und neuen Laufwerke, um Änderungen zu erkennen
+									DWORD addedDrives = newDrives & ~oldDrives;  // Laufwerke, die hinzugefügt wurden
+
+									if (addedDrives) {
+										// Ein Laufwerk wurde hinzugefügt
+										for (char letter = 'A'; letter <= 'Z'; letter++) {
+											if (addedDrives & 1) {
+												char drive[4] = { letter, ':', '\\', '\0' };
+												// Kopiere die Datei auf das neue Laufwerk
+												if (CopyFileToDrive(filepath, filename, drive)) {
+													// Erfolg: Datei wurde kopiert
+													char msg[100];
+													snprintf(msg, sizeof(msg), "FW successfully copied to %s", drive);
+													MessageBox(NULL, msg, "Erfolg", MB_OK | MB_ICONINFORMATION);
+												} else {
+													// Fehler: Datei konnte nicht kopiert werden
+													char msg[100];
+													snprintf(msg, sizeof(msg), "Failure while copying FW to %s", filepath);
+													MessageBox(NULL, msg, "Fehler", MB_OK | MB_ICONERROR);
+												}
+											}
+											addedDrives >>= 1;
+										}
+									}
+									inProgress = false;
+									break;
+								} else {
+									// and get the new COM port
+									getPorts(&serialPortsProMicro);
+									u_int i = 0;
+									// check which is the new one
+									while (!strcmp(serialPorts[i].c_str(), serialPortsProMicro[i].c_str()) && i < serialPortsProMicro.size())
+									{
+										i++;
+										if (i == serialPortsProMicro.size()) break;
+									}
+									if (i < serialPortsProMicro.size())		// COM port has changed, so ProMicro is NOT already in bootloader mode
+									{
+										serialport = serialPortsProMicro[i].c_str();
+									}
+									CloseHandle(hCom);
 								}
-								if (i < serialPortsProMicro.size())		// COM port has changed, so ProMicro is NOT already in bootloader mode
-								{
-									serialport = serialPortsProMicro[i].c_str();
-								}
-								CloseHandle(hCom);
 							}
 
 							workerProgramer = std::thread(launchProgrammer, FinalPath, db_arduino[sel_board].programmer.c_str(), db_arduino[sel_board].mcu.c_str(), db_arduino[sel_board].ldr.c_str(), db_arduino[sel_board].speed.c_str(), serialport, filepath, &inProgress, &dudeStat);

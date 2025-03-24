@@ -1,5 +1,7 @@
 #include <windows.h>
-
+#include <vector>
+#include <string>
+#include "include/FileHandling.h"
 
 bool cutFilePath(const char* filepath, char* filename) {
 
@@ -28,7 +30,7 @@ bool openfile(char* filepath, char* filename) {
 	ofn.hwndOwner = NULL;
 	ofn.lpstrFile = file;
 	ofn.nMaxFile = MAX_PATH;
-	ofn.lpstrFilter = ("Intel HEX;bin files\0*.hex;*bin\0Intel HEX\0*.hex\0bin files\0*.bin\0All files\0*.*\0");
+	ofn.lpstrFilter = ("Intel HEX;bin files\0*.hex;*bin\0Intel HEX\0*.hex\0bin files\0*.bin\0Pico files\0*.uf2\0All files\0*.*\0");
 	ofn.nFilterIndex = 1;
 	ofn.lpstrFileTitle = NULL;
 	ofn.nMaxFileTitle = 0;
@@ -45,4 +47,23 @@ bool openfile(char* filepath, char* filename) {
 	}
 
 	return false;
+}
+
+
+DWORD GetCurrentDrives() {
+	return GetLogicalDrives();  // Gibt die Bitmaske der aktuellen Laufwerke zurück
+}
+
+
+bool CopyFileToDrive(const char* sourceFilePath, const char* sourceFileName, const char* targetDrive) {
+	// Erstelle den Zielpfad, auf das neue Laufwerk
+	char targetPath[MAX_PATH_LENGTH];
+	snprintf(targetPath, sizeof(targetPath), "%s%s", targetDrive, sourceFileName);
+
+	// Kopiere die Datei auf das neue Laufwerk
+	if (CopyFile(sourceFilePath, targetPath, FALSE))
+		return true;
+	else
+		return false;
+
 }
