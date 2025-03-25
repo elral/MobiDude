@@ -1,6 +1,6 @@
 # AVR Firmware Uploader
 
-November 15 2024 - v1.0.7
+March 25 2025 - v1.0.9
 
 Yes, it's just a simple GUI for avrdude and ESP32tool.
 
@@ -10,8 +10,9 @@ Features:
 - Upload firmware files by just defining your Arduino Board and selecting the firmware file
 - Sometimes the ProMicro gets a time out from AVRDude. In this case just start again flashing
 - ESP32 must **not** be in bootloader mode for now
+- Pico must **not** be in bootloader mode for now
 
-<img src="info/interface-106.jpg" width="356"/>
+<img src="info/interface-109.jpg" width="356"/>
 
 
 ## List of arduino boards
@@ -22,7 +23,8 @@ Features:
 - Nano (with old and new bootloader)
 - Mini
 - Pro/Mini (with separate USB adapter)
-- ESP32-S2-mini
+- ESP32-S2/S3
+- Raspberry Pico (should work with all variants)
 
 ## Erase EEPROM
 
@@ -55,4 +57,4 @@ A terminal program is included to communicate with the board via a serial connec
 Just download the zip package, extract it in an own folder and run MobiDude.exe
 
 
-[Download package 📦](https://github.com/elral/MobiDude/releases/download/1.0.8/MobiDude-1.0.8.zip)
+[Download package 📦](https://github.com/elral/MobiDude/releases/download/1.0.9/MobiDude-1.0.9.zip)

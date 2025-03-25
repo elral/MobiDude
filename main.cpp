@@ -356,12 +356,15 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 									DWORD newDrives = GetCurrentDrives();
 									// Check old and new drives to see what has changed
 									DWORD addedDrives = newDrives & ~oldDrives;  // Drives which were added
-
-									checkBootDrive(newDrives, oldDrives, filepath, filename);
-
-									inProgress = false;
-									programerStarted = false;
+									if (checkBootDriveAndCopy(newDrives, oldDrives, filepath, filename)) {
+										dudeStat = 0;
+									}
+									else {
+										dudeStat = EC_DUDE_MAIN;
+									}
 									CloseHandle(hCom);
+									//Sleep(1500);
+									inProgress = false;
 									break;
 								} else {
 									// and get the new COM port
@@ -471,7 +474,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 
         	if(!inProgress && programerStarted){
         		//	stop routine
-				workerProgramer.join();
+				if (strcmp(db_arduino[sel_board].board.c_str(), "Raspberry Pico")) {
+					workerProgramer.join();
+				}
         		KillTimer(hwnd, ID_TIMER_AVRDUDE);
         		waitToFlash = 0;
         		inProgress = false;
@@ -488,7 +493,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
         		if(dudeStat == 0){
         			SendMessage(progbar_flash, PBM_SETPOS, progbar_steps, 0);
         			MessageBox(NULL, "Firmware successfully uploaded","Programmer done", MB_ICONINFORMATION | MB_OK);
-		//			PostQuitMessage(0);
 				}
 				else{
 					SendMessage(progbar_flash, PBM_SETPOS, 0, 0);
@@ -501,6 +505,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 							}
 							else if (!strcmp(db_arduino[sel_board].programmer.c_str(), "ESP32tool")) {
 								MessageBox(NULL, "Can't leaving Bootloader\nPlease do a manuel reset", "Programmer Info", MB_ICONEXCLAMATION | MB_OK);
+							}
+							else if (!strcmp(db_arduino[sel_board].programmer.c_str(), "Raspberry Pico")) {
+								MessageBox(NULL, "Failure while copying uf2 file", "Programmer Info", MB_ICONEXCLAMATION | MB_OK);
 							}
 							break;
 						}

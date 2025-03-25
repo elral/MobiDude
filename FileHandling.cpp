@@ -65,7 +65,7 @@ bool CopyFileToDrive(const char* sourceFilePath, const char* sourceFileName, con
 
 }
 
-void checkBootDrive(DWORD newDrives, DWORD oldDrives, const char* sourceFilePath, const char* sourceFileName)
+bool checkBootDriveAndCopy(DWORD newDrives, DWORD oldDrives, const char* sourceFilePath, const char* sourceFileName)
 {
 	DWORD addedDrives = newDrives & ~oldDrives;  // Drives which were added
 	if (addedDrives) {
@@ -75,18 +75,20 @@ void checkBootDrive(DWORD newDrives, DWORD oldDrives, const char* sourceFilePath
 				char drive[4] = { letter, ':', '\\', '\0' };
 				// Copy file to new drive
 				if (CopyFileToDrive(sourceFilePath, sourceFileName, drive)) {
-					char msg[200];
-					snprintf(msg, sizeof(msg), "FW successfully copied to %s", drive);
-					MessageBox(NULL, msg, "Success", MB_OK | MB_ICONINFORMATION);
-					return;
+					//char msg[200];
+					//snprintf(msg, sizeof(msg), "FW successfully copied to %s", drive);
+					//MessageBox(NULL, msg, "Success", MB_OK | MB_ICONINFORMATION);
+					return true;
 				}
 				else {
-					 char msg[200];
-					 snprintf(msg, sizeof(msg), "Failure while copying FW to %s", sourceFilePath);
-					 MessageBox(NULL, msg, "Failure", MB_OK | MB_ICONERROR);
+					 //char msg[200];
+					 //snprintf(msg, sizeof(msg), "Failure while copying FW to %s", sourceFilePath);
+					 //MessageBox(NULL, msg, "Failure", MB_OK | MB_ICONERROR);
+					 return false;
 				}
 			}
 			addedDrives >>= 1;
 		}
 	}
+	return false;
 }
