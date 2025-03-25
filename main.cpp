@@ -295,7 +295,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 							dudeStat = 0;
 							const char* serialport;
 							serialport = serialPorts[sel_com].c_str();
-							
+
+							//MessageBox(NULL, serialport, "Open COM port", MB_ICONINFORMATION | MB_OK);
+
 							// it's an ProMicro or ESP32-S2, entering bootloader will change the serial port
 							// or it's a Pico where the flash drive will appear
 							if (!strcmp(db_arduino[sel_board].mcu.c_str(), "atmega32u4") || !strcmp(db_arduino[sel_board].programmer.c_str(), "ESP32tool") || !strcmp(db_arduino[sel_board].programmer.c_str(), "Picotool")) {
@@ -348,7 +350,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 
 								fSuccess = SetCommState(hCom, &dcb);
 
-								// wait to appear new COM port
+								// wait to appear new COM port for ProMicro
+								// or to enter bootloader for ESP32
 								Sleep(1500);
 								
 								if (!strcmp(db_arduino[sel_board].board.c_str(), "Raspberry Pico"))
@@ -362,11 +365,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 									else {
 										dudeStat = EC_DUDE_MAIN;
 									}
-									CloseHandle(hCom);
-									//Sleep(1500);
 									inProgress = false;
 									break;
-								} else {
+								} else if (!strcmp(db_arduino[sel_board].mcu.c_str(), "atmega32u4")) {
 									// and get the new COM port
 									getPorts(&serialPortsProMicro);
 									u_int i = 0;
@@ -380,13 +381,12 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 									{
 										serialport = serialPortsProMicro[i].c_str();
 									}
-									CloseHandle(hCom);
 								}
+								CloseHandle(hCom);
 							}
 
 							workerProgramer = std::thread(launchProgrammer, FinalPath, db_arduino[sel_board].programmer.c_str(), db_arduino[sel_board].mcu.c_str(), db_arduino[sel_board].ldr.c_str(), db_arduino[sel_board].speed.c_str(), serialport, filepath, &inProgress, &dudeStat);
 							break;
-
 						}
 
 						case GUI_BTN_TERMINAL: {
