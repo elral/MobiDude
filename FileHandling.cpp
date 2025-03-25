@@ -56,14 +56,37 @@ DWORD GetCurrentDrives() {
 
 
 bool CopyFileToDrive(const char* sourceFilePath, const char* sourceFileName, const char* targetDrive) {
-	// Erstelle den Zielpfad, auf das neue Laufwerk
 	char targetPath[MAX_PATH_LENGTH];
 	snprintf(targetPath, sizeof(targetPath), "%s%s", targetDrive, sourceFileName);
-
-	// Kopiere die Datei auf das neue Laufwerk
 	if (CopyFile(sourceFilePath, targetPath, FALSE))
 		return true;
 	else
 		return false;
 
+}
+
+void checkBootDrive(DWORD newDrives, DWORD oldDrives, const char* sourceFilePath, const char* sourceFileName)
+{
+	DWORD addedDrives = newDrives & ~oldDrives;  // Drives which were added
+	if (addedDrives) {
+		// A new drive was added
+		for (char letter = 'A'; letter <= 'Z'; letter++) {
+			if (addedDrives & 1) {
+				char drive[4] = { letter, ':', '\\', '\0' };
+				// Copy file to new drive
+				if (CopyFileToDrive(sourceFilePath, sourceFileName, drive)) {
+					char msg[200];
+					snprintf(msg, sizeof(msg), "FW successfully copied to %s", drive);
+					MessageBox(NULL, msg, "Success", MB_OK | MB_ICONINFORMATION);
+					return;
+				}
+				else {
+					 char msg[200];
+					 snprintf(msg, sizeof(msg), "Failure while copying FW to %s", sourceFilePath);
+					 MessageBox(NULL, msg, "Failure", MB_OK | MB_ICONERROR);
+				}
+			}
+			addedDrives >>= 1;
+		}
+	}
 }

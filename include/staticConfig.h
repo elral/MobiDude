@@ -1,6 +1,6 @@
 #pragma once
 
-#define VER_AUTHSTAMP		"2024 elral"
+#define VER_AUTHSTAMP		"2025 elral"
 
 #define windowSizeX			400
 #define windowSizeY			360
@@ -49,4 +49,4 @@
 
 #define configFileHeader	"#AVRBINARYUPLOADCONFIGFILE\nBIN="
 
-#define PRODUCT_NAME		"MobiDude Firmware Uploader 1.0.8"
+#define PRODUCT_NAME		"MobiDude Firmware Uploader 1.0.9"

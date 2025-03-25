@@ -354,32 +354,14 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 								if (!strcmp(db_arduino[sel_board].board.c_str(), "Raspberry Pico"))
 								{
 									DWORD newDrives = GetCurrentDrives();
+									// Check old and new drives to see what has changed
+									DWORD addedDrives = newDrives & ~oldDrives;  // Drives which were added
 
-									// Vergleiche die alten und neuen Laufwerke, um Änderungen zu erkennen
-									DWORD addedDrives = newDrives & ~oldDrives;  // Laufwerke, die hinzugefügt wurden
+									checkBootDrive(newDrives, oldDrives, filepath, filename);
 
-									if (addedDrives) {
-										// Ein Laufwerk wurde hinzugefügt
-										for (char letter = 'A'; letter <= 'Z'; letter++) {
-											if (addedDrives & 1) {
-												char drive[4] = { letter, ':', '\\', '\0' };
-												// Kopiere die Datei auf das neue Laufwerk
-												if (CopyFileToDrive(filepath, filename, drive)) {
-													// Erfolg: Datei wurde kopiert
-													char msg[100];
-													snprintf(msg, sizeof(msg), "FW successfully copied to %s", drive);
-													MessageBox(NULL, msg, "Erfolg", MB_OK | MB_ICONINFORMATION);
-												} else {
-													// Fehler: Datei konnte nicht kopiert werden
-													char msg[100];
-													snprintf(msg, sizeof(msg), "Failure while copying FW to %s", filepath);
-													MessageBox(NULL, msg, "Fehler", MB_OK | MB_ICONERROR);
-												}
-											}
-											addedDrives >>= 1;
-										}
-									}
 									inProgress = false;
+									programerStarted = false;
+									CloseHandle(hCom);
 									break;
 								} else {
 									// and get the new COM port
