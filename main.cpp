@@ -206,7 +206,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 			}
 			
 			//	grey out inactive buttons
-			EnableWindow(GetDlgItem(hwnd, GUI_BTN_FLASH), false);
+		//	EnableWindow(GetDlgItem(hwnd, GUI_BTN_FLASH), false);
 			
 			//	hide in-process controls
 			ShowWindow(btn_canc, false);
@@ -242,7 +242,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 							if(openfile(filepath, filename)){
 								//	display file name
 								char showfilename[binfilenamelen];
-								strcpy_s(showfilename, "File: ");
 								strcpy_s(showfilename, filename);
 								//	show buttons
 								SetWindowText(stc_filename, showfilename);
@@ -260,6 +259,11 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 						case GUI_BTN_FLASH:{
 							if (!strcmp(db_arduino[sel_board].programmer.c_str(), "none"))
 							{
+								break;
+							}
+							if (strlen(filename) == 0 && strcmp(db_arduino[sel_board].board.c_str(),"Raspberry Pico"))
+							{
+								MessageBox(NULL, "Please choose a Filename", "Programmer error", MB_ICONEXCLAMATION | MB_OK);
 								break;
 							}
 							if (!strcmp(db_arduino[sel_board].mcu.c_str(), "ESP32-S2"))
@@ -293,12 +297,15 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 							serialport = serialPorts[sel_com].c_str();
 							
 							// it's an ProMicro or ESP32-S2, entering bootloader will change the serial port
-							if (!strcmp(db_arduino[sel_board].mcu.c_str(), "atmega32u4") || !strcmp(db_arduino[sel_board].programmer.c_str(), "ESP32tool")) {
+							// or it's a Pico where the flash drive will appear
+							if (!strcmp(db_arduino[sel_board].mcu.c_str(), "atmega32u4") || !strcmp(db_arduino[sel_board].programmer.c_str(), "ESP32tool") || !strcmp(db_arduino[sel_board].programmer.c_str(), "Picotool")) {
 								// open serial port with 1200 Baud to enter bootloader
 								DCB dcb;
 								HANDLE hCom;
 								BOOL fSuccess;
-								
+
+								DWORD oldDrives = GetCurrentDrives();
+
 								// CAUTION!! filename for COM ports > 9 must be: "\\.\COM15"
 								// this syntax works also for COM ports < 10
 								std::string PortNo = "\\\\.\\" + serialPorts[sel_com];
@@ -343,21 +350,38 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 
 								// wait to appear new COM port
 								Sleep(1500);
-
-								// and get the new COM port
-								getPorts(&serialPortsProMicro);
-								u_int i = 0;
-								// check which is the new one
-								while (!strcmp(serialPorts[i].c_str(), serialPortsProMicro[i].c_str()) && i < serialPortsProMicro.size())
+								
+								if (!strcmp(db_arduino[sel_board].board.c_str(), "Raspberry Pico"))
 								{
-									i++;
-									if (i == serialPortsProMicro.size()) break;
+									DWORD newDrives = GetCurrentDrives();
+									// Check old and new drives to see what has changed
+									DWORD addedDrives = newDrives & ~oldDrives;  // Drives which were added
+									if (checkBootDriveAndCopy(newDrives, oldDrives, filepath, filename)) {
+										dudeStat = 0;
+									}
+									else {
+										dudeStat = EC_DUDE_MAIN;
+									}
+									CloseHandle(hCom);
+									//Sleep(1500);
+									inProgress = false;
+									break;
+								} else {
+									// and get the new COM port
+									getPorts(&serialPortsProMicro);
+									u_int i = 0;
+									// check which is the new one
+									while (!strcmp(serialPorts[i].c_str(), serialPortsProMicro[i].c_str()) && i < serialPortsProMicro.size())
+									{
+										i++;
+										if (i == serialPortsProMicro.size()) break;
+									}
+									if (i < serialPortsProMicro.size())		// COM port has changed, so ProMicro is NOT already in bootloader mode
+									{
+										serialport = serialPortsProMicro[i].c_str();
+									}
+									CloseHandle(hCom);
 								}
-								if (i < serialPortsProMicro.size())		// COM port has changed, so ProMicro is NOT already in bootloader mode
-								{
-									serialport = serialPortsProMicro[i].c_str();
-								}
-								CloseHandle(hCom);
 							}
 
 							workerProgramer = std::thread(launchProgrammer, FinalPath, db_arduino[sel_board].programmer.c_str(), db_arduino[sel_board].mcu.c_str(), db_arduino[sel_board].ldr.c_str(), db_arduino[sel_board].speed.c_str(), serialport, filepath, &inProgress, &dudeStat);
@@ -450,7 +474,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 
         	if(!inProgress && programerStarted){
         		//	stop routine
-				workerProgramer.join();
+				if (strcmp(db_arduino[sel_board].board.c_str(), "Raspberry Pico")) {
+					workerProgramer.join();
+				}
         		KillTimer(hwnd, ID_TIMER_AVRDUDE);
         		waitToFlash = 0;
         		inProgress = false;
@@ -467,7 +493,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
         		if(dudeStat == 0){
         			SendMessage(progbar_flash, PBM_SETPOS, progbar_steps, 0);
         			MessageBox(NULL, "Firmware successfully uploaded","Programmer done", MB_ICONINFORMATION | MB_OK);
-		//			PostQuitMessage(0);
 				}
 				else{
 					SendMessage(progbar_flash, PBM_SETPOS, 0, 0);
@@ -480,6 +505,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 							}
 							else if (!strcmp(db_arduino[sel_board].programmer.c_str(), "ESP32tool")) {
 								MessageBox(NULL, "Can't leaving Bootloader\nPlease do a manuel reset", "Programmer Info", MB_ICONEXCLAMATION | MB_OK);
+							}
+							else if (!strcmp(db_arduino[sel_board].programmer.c_str(), "Raspberry Pico")) {
+								MessageBox(NULL, "Failure while copying uf2 file", "Programmer Info", MB_ICONEXCLAMATION | MB_OK);
 							}
 							break;
 						}
