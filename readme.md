@@ -1,6 +1,6 @@
 # AVR Firmware Uploader
 
-March 25 2025 - v1.0.9
+March 26 2025 - v1.1.0
 
 Yes, it's just a simple GUI for avrdude and ESP32tool.
 
@@ -12,7 +12,7 @@ Features:
 - ESP32 must **not** be in bootloader mode for now
 - Pico must **not** be in bootloader mode for now
 
-<img src="info/interface-109.jpg" width="356"/>
+<img src="info/interface-110.jpg" width="356"/>
 
 
 ## List of arduino boards
@@ -57,4 +57,4 @@ A terminal program is included to communicate with the board via a serial connec
 Just download the zip package, extract it in an own folder and run MobiDude.exe
 
 
-[Download package 📦](https://github.com/elral/MobiDude/releases/download/1.0.9/MobiDude-1.0.9.zip)
+[Download package 📦](https://github.com/elral/MobiDude/releases/download/1.1.0/MobiDude-1.1.0.zip)
