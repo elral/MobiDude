@@ -19,12 +19,10 @@ void launchProgrammer(const TCHAR* fullPath, const char* use_programmer, const c
 		sprintf_s(loaderCommand, "\"%sAVRDude\\avrdude.exe\" -v -p%s -c%s -P %s -b%s -D -U flash:w:\"%s\":a", fullPath, use_mcu, use_prog, use_port, use_speed, filepath);
 	}
 	else if (!strcmp(use_programmer, "ESP32tool")) {
-		sprintf_s(loaderCommand, "\"%sESP-tool\\esptool.exe\" write_flash 0x0000 --port %s\" %s\"", fullPath, use_port, filepath);
+		sprintf_s(loaderCommand, "\"%sESP-tool\\esptool.exe\" --port %s write_flash 0x0000 \"%s\"", fullPath, use_port, filepath);
 	}
 
-
-
-	// MessageBox(NULL, loaderCommand, "About...", 0);		// undefine this to get message window with commands for AVRdude
+	//MessageBox(NULL, loaderCommand, "About...", 0);		// undefine this to get message window with commands for AVRdude
 
 	STARTUPINFO stinf = {0};
 	stinf.cb = sizeof(stinf);
