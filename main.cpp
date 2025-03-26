@@ -367,7 +367,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 									}
 									inProgress = false;
 									break;
-								} else if (!strcmp(db_arduino[sel_board].mcu.c_str(), "atmega32u4")) {
+								} else if (!strcmp(db_arduino[sel_board].mcu.c_str(), "atmega32u4") || !strcmp(db_arduino[sel_board].programmer.c_str(), "ESP32tool")) {
 									// and get the new COM port
 									getPorts(&serialPortsProMicro);
 									u_int i = 0;
