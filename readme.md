@@ -1,6 +1,6 @@
 # AVR Firmware Uploader
 
-March 26 2025 - v1.1.0
+March 26 2025 - v1.1.1
 
 Yes, it's just a simple GUI for avrdude and ESP32tool.
 
@@ -57,4 +57,4 @@ A terminal program is included to communicate with the board via a serial connec
 Just download the zip package, extract it in an own folder and run MobiDude.exe
 
 
-[Download package 📦](https://github.com/elral/MobiDude/releases/download/1.1.0/MobiDude-1.1.0.zip)
+[Download package 📦](https://github.com/elral/MobiDude/releases/download/1.1.1/MobiDude-1.1.1.zip)
