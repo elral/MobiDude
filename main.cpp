@@ -353,6 +353,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 								// wait to appear new COM port for ProMicro
 								// or to enter bootloader for ESP32
 								Sleep(1500);
+								CloseHandle(hCom);
 								
 								if (!strcmp(db_arduino[sel_board].board.c_str(), "Raspberry Pico"))
 								{
@@ -382,7 +383,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 										serialport = serialPortsProMicro[i].c_str();
 									}
 								}
-								CloseHandle(hCom);
 							}
 
 							workerProgramer = std::thread(launchProgrammer, FinalPath, db_arduino[sel_board].programmer.c_str(), db_arduino[sel_board].mcu.c_str(), db_arduino[sel_board].ldr.c_str(), db_arduino[sel_board].speed.c_str(), serialport, filepath, &inProgress, &dudeStat);
