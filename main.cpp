@@ -14,6 +14,7 @@
 #include "include/serial.h"
 #include "include/shell.h"
 #include "include/FileHandling.h"
+#include "include/buttons.h"
 
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam);
@@ -155,14 +156,18 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 				
 		//	draw dropboxes	
 			//	Arduino Board dropbox
-			box_avrboard = CreateWindow(WC_COMBOBOX, NULL, WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST | CBS_SIMPLE | WS_VSCROLL, 40, 170, 200, 380, hwnd, (HMENU)GUI_BOX_MCU, NULL, NULL);
+			//box_avrboard = CreateWindow(WC_COMBOBOX, NULL, WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST | CBS_SIMPLE | WS_VSCROLL, 40, 170, 200, 380, hwnd, (HMENU)GUI_BOX_MCU, NULL, NULL);
+			drawArea boxAvrboardArea = { 40, 170, 200, 380 };
+			box_avrboard = drawButton(WC_COMBOBOX, NULL, WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST | CBS_SIMPLE | WS_VSCROLL, boxAvrboardArea, hwnd, GUI_BOX_MCU);
 				for (u_int i = 0; i < db_arduino.size(); i++) {
 					SendMessage(box_avrboard, CB_ADDSTRING, 0, (LPARAM)db_arduino[i].board.c_str());
 				}
 				SendMessage(box_avrboard, CB_SETCURSEL , sel_board, (LPARAM)NULL);
 		
 			//	com port dropbox
-			box_comport = CreateWindow(WC_COMBOBOX, NULL, WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST | CBS_SIMPLE | WS_VSCROLL, 40, 220, 200, 200, hwnd, (HMENU)GUI_BOX_COM, NULL, NULL);
+			//box_comport = CreateWindow(WC_COMBOBOX, NULL, WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST | CBS_SIMPLE | WS_VSCROLL, 40, 220, 200, 200, hwnd, (HMENU)GUI_BOX_COM, NULL, NULL);
+			drawArea boxComportArea = { 40, 220, 200, 200 };
+			box_comport = drawButton(WC_COMBOBOX, NULL, WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST | CBS_SIMPLE | WS_VSCROLL, boxComportArea, hwnd, GUI_BOX_COM);
 				for(u_int i = 0; i < serialPorts.size(); i++){ 
 					SendMessage(box_comport, CB_ADDSTRING, 0, (LPARAM) serialPorts[i].c_str());
 				}

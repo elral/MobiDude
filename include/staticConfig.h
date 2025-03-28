@@ -37,8 +37,8 @@
 #define GUI_STAT_TIP_MCU	 26
 #define GUI_STAT_TIP_COM	 27
 #define GUI_STAT_FILE		 28
-#define GUI_BOX_MCU			 29
-#define GUI_BOX_COM			 30
+#define GUI_BOX_MCU			 (HMENU)29
+#define GUI_BOX_COM			 (HMENU)30
 #define GUI_BTN_OPEN		 31
 #define GUI_BTN_FLASH		 32
 #define GUI_BTN_TERMINAL	 33

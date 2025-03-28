@@ -99,11 +99,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="FileHandling.cpp" />
+    <ClCompile Include="buttons.cpp" />
     <ClCompile Include="serial.cpp" />
     <ClCompile Include="shell.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\buttons.h" />
     <ClInclude Include="include\FileHandling.h" />
     <ClInclude Include="include\serial.h" />
     <ClInclude Include="include\shell.h" />
