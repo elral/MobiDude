@@ -110,17 +110,12 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 	GetModuleFileName(NULL, fullPath, MAX_PATH);
 	_splitpath(fullPath, driveLetter, directory, NULL, NULL);
 	sprintf(FinalPath, "%s%s", driveLetter, directory);
-	
-	//std::wstring::size_type pos = std::wstring(fullPath).find_last_of(L"\\/");
-	//std::wstring(fullPath).substr(0, pos);
 
 
 	switch(Message) {
-
 		case WM_CREATE: {
 			//	abort if there is no serial ports
 			if(!getPorts(&serialPorts)){
-				
 				MessageBox(NULL, "No serial port was found on this PC","No COM ports", MB_ICONINFORMATION | MB_OK);
 				PostQuitMessage(0);
 			}
@@ -197,85 +192,14 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 						}
 
 					}
-					
 					break;
 				}
 			}
-			
 			break;
 		}
 			
         case WM_TIMER:{
-			if (!terminalRunning && terminalStarted) {
-				workerTerminal.join();
-				KillTimer(hwnd, ID_TIMER_TERMINAL);
-				EnableWindow(GetDlgItem(hwnd, GUI_BTN_TERMINAL), true);
-				EnableWindow(GetDlgItem(hwnd, GUI_BTN_GETINFO), true);
-				if (strlen(filename) > 2) {
-					EnableWindow(GetDlgItem(hwnd, GUI_BTN_FLASH), true);
-				}
-				terminalStarted = false;
-			}
-
-        	if(!inProgress && programerStarted){
-        		//	stop routine
-				if (strcmp(db_arduino[sel_board].board.c_str(), "Raspberry Pico")) {
-					workerProgramer.join();
-				}
-        		KillTimer(hwnd, ID_TIMER_AVRDUDE);
-        		waitToFlash = 0;
-        		inProgress = false;
-				programerStarted = false;
-        		
-        		//	switch controls
-        		ShowWindow(btn_canc, false);
-				ShowWindow(progbar_flash, false);
-				ShowWindow(btn_flash, true);
-				ShowWindow(btn_terminal, true);
-				ShowWindow(btn_getInfo, true);
-        		
-        		//	show messages
-        		if(dudeStat == 0){
-        			SendMessage(progbar_flash, PBM_SETPOS, progbar_steps, 0);
-        			MessageBox(NULL, "Firmware successfully uploaded","Programmer done", MB_ICONINFORMATION | MB_OK);
-				}
-				else{
-					SendMessage(progbar_flash, PBM_SETPOS, 0, 0);
-					
-					switch(dudeStat){
-						
-						case EC_DUDE_MAIN:{
-							if (!strcmp(db_arduino[sel_board].programmer.c_str(), "AVRDude")) {
-								MessageBox(NULL, "Port or device is inaccessible","Programmer error", MB_ICONEXCLAMATION | MB_OK);
-							}
-							else if (!strcmp(db_arduino[sel_board].programmer.c_str(), "ESP32tool")) {
-								MessageBox(NULL, "Can't leaving Bootloader\nPlease do a manuel reset", "Programmer Info", MB_ICONEXCLAMATION | MB_OK);
-							}
-							else if (!strcmp(db_arduino[sel_board].programmer.c_str(), "Raspberry Pico")) {
-								MessageBox(NULL, "Failure while copying uf2 file", "Programmer Info", MB_ICONEXCLAMATION | MB_OK);
-							}
-							break;
-						}
-						
-						case EC_DUDE_TIMEOUT:{
-							MessageBox(NULL, "Connection timed out","Programmer error", MB_ICONERROR | MB_OK);
-							break;
-						}
-						
-						case EC_DUDE_NOEXEC:{
-							MessageBox(NULL, "Unable to start Programmer","Programmer error", MB_ICONERROR | MB_OK);
-							break;
-						}
-					}
-				}
-			}
-			else {
-
-        		//	step pbar forward
-        		SendMessage(progbar_flash, PBM_STEPIT, 0, 0);
-        		waitToFlash++;
-			}
-        	
+			handleWMTimer(hwnd, &terminalRunning, &terminalStarted, &inProgress, &programerStarted,&dudeStat, &waitToFlash, filename, &workerProgramer, &workerTerminal);
 			break;
 		}
 
@@ -292,6 +216,79 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam){
 		default:
 			return DefWindowProc(hwnd, Message, wParam, lParam);
 	}
-
 	return 0;
+}
+
+void handleWMTimer(HWND hwnd, bool* terminalRunning, bool* terminalStarted, bool* inProgress, bool* programerStarted,
+				   DWORD* dudeStat, unsigned int *waitToFlash, char* filename, std::thread *workerProgramer, std::thread* workerTerminal)
+{
+	if (!*terminalRunning && *terminalStarted) {
+		workerTerminal->join();
+		KillTimer(hwnd, ID_TIMER_TERMINAL);
+		EnableWindow(GetDlgItem(hwnd, GUI_BTN_TERMINAL), true);
+		EnableWindow(GetDlgItem(hwnd, GUI_BTN_GETINFO), true);
+		if (strlen(filename) > 2) {
+			EnableWindow(GetDlgItem(hwnd, GUI_BTN_FLASH), true);
+		}
+		terminalStarted = false;
+	}
+
+	if (!*inProgress && *programerStarted) {
+		//	stop routine
+		if (strcmp(db_arduino[sel_board].board.c_str(), "Raspberry Pico")) {
+			workerProgramer->join();
+		}
+		KillTimer(hwnd, ID_TIMER_AVRDUDE);
+		*waitToFlash = 0;
+		inProgress = false;
+		programerStarted = false;
+
+		//	switch controls
+		ShowWindow(btn_canc, false);
+		ShowWindow(progbar_flash, false);
+		ShowWindow(btn_flash, true);
+		ShowWindow(btn_terminal, true);
+		ShowWindow(btn_getInfo, true);
+
+		//	show messages
+		if (*dudeStat == 0) {
+			SendMessage(progbar_flash, PBM_SETPOS, progbar_steps, 0);
+			MessageBox(NULL, "Firmware successfully uploaded", "Programmer done", MB_ICONINFORMATION | MB_OK);
+		}
+		else {
+			SendMessage(progbar_flash, PBM_SETPOS, 0, 0);
+
+			switch (*dudeStat) {
+
+			case EC_DUDE_MAIN: {
+				if (!strcmp(db_arduino[sel_board].programmer.c_str(), "AVRDude")) {
+					MessageBox(NULL, "Port or device is inaccessible", "Programmer error", MB_ICONEXCLAMATION | MB_OK);
+				}
+				else if (!strcmp(db_arduino[sel_board].programmer.c_str(), "ESP32tool")) {
+					MessageBox(NULL, "Can't leaving Bootloader\nPlease do a manuel reset", "Programmer Info", MB_ICONEXCLAMATION | MB_OK);
+				}
+				else if (!strcmp(db_arduino[sel_board].programmer.c_str(), "Raspberry Pico")) {
+					MessageBox(NULL, "Failure while copying uf2 file", "Programmer Info", MB_ICONEXCLAMATION | MB_OK);
+				}
+				break;
+			}
+
+			case EC_DUDE_TIMEOUT: {
+				MessageBox(NULL, "Connection timed out", "Programmer error", MB_ICONERROR | MB_OK);
+				break;
+			}
+
+			case EC_DUDE_NOEXEC: {
+				MessageBox(NULL, "Unable to start Programmer", "Programmer error", MB_ICONERROR | MB_OK);
+				break;
+			}
+			}
+		}
+	}
+	else {
+
+		//	step pbar forward
+		SendMessage(progbar_flash, PBM_STEPIT, 0, 0);
+		(*waitToFlash)++;
+	}
 }

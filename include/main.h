@@ -10,6 +10,8 @@
 #include <thread>
 #include <iostream>
 
+void handleWMTimer(HWND hwnd, bool* terminalRunning, bool* terminalStarted, bool* inProgress, bool* programerStarted,
+    DWORD* dudeStat, unsigned int* waitToFlash, char* filename, std::thread* workerProgramer, std::thread* workerTerminal);
 struct arduinoboard {
 
     std::string board;
