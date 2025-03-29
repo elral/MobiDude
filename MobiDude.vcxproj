@@ -107,6 +107,7 @@
   <ItemGroup>
     <ClInclude Include="include\buttons.h" />
     <ClInclude Include="include\FileHandling.h" />
+    <ClInclude Include="include\main.h" />
     <ClInclude Include="include\serial.h" />
     <ClInclude Include="include\shell.h" />
     <ClInclude Include="include\staticConfig.h" />
