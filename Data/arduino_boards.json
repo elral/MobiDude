@@ -1,0 +1,79 @@
+﻿[
+  {
+    "Name": "Arduino Mega2560",
+    "MCU": "atmega2560",
+    "Tool": "AVRDude",
+    "Protocol": "wiring",
+    "Baudrate": "115200"
+  },
+  {
+    "Name": "ProMicro",
+    "MCU": "atmega32u4",
+    "Tool": "AVRDude",
+    "Protocol": "avr109",
+    "Baudrate": "57600"
+  },
+  {
+    "Name": "Uno",
+    "MCU": "atmega328p",
+    "Tool": "AVRDude",
+    "Protocol": "arduino",
+    "Baudrate": "115200"
+  },
+  {
+    "Name": "Nano",
+    "MCU": "atmega328p",
+    "Tool": "AVRDude",
+    "Protocol": "arduino",
+    "Baudrate": "115200"
+  },
+  {
+    "Name": "Nano old Bootloader",
+    "MCU": "atmega328p",
+    "Tool": "AVRDude",
+    "Protocol": "arduino",
+    "Baudrate": "57600"
+  },
+  {
+    "Name": "Mini",
+    "MCU": "atmega328p",
+    "Tool": "AVRDude",
+    "Protocol": "arduino",
+    "Baudrate": "115200"
+  },
+  {
+    "Name": "Pro/Mini",
+    "MCU": "atmega328p",
+    "Tool": "AVRDude",
+    "Protocol": "arduino",
+    "Baudrate": "57600"
+  },
+  {
+    "Name": "------",
+    "MCU": "",
+    "Tool": "none",
+    "Protocol": "",
+    "Baudrate": ""
+  },
+  {
+    "Name": "ESP32-S2/S3",
+    "MCU": "ESP32-S2",
+    "Tool": "ESP32tool",
+    "Protocol": "",
+    "Baudrate": ""
+  },
+  {
+    "Name": "------",
+    "MCU": "",
+    "Tool": "none",
+    "Protocol": "",
+    "Baudrate": ""
+  },
+  {
+    "Name": "Raspberry Pico",
+    "MCU": "Pico",
+    "Tool": "Picotool",
+    "Protocol": "",
+    "Baudrate": ""
+  }
+]

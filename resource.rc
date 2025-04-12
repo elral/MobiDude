@@ -1,9 +1,0 @@
-#include "include/staticConfig.h"
-
-APPICON ICON "res\\appicon.ico"
-
-IMG_BANNER BITMAP  "res\\banner.bmp"
-IMG_FOLDER BITMAP "res\\folder.bmp"
-IMG_HELP BITMAP "res\\help.bmp"
-IMG_CANCEL BITMAP "res\\cancel.bmp"
-IMG_BOARD BITMAP "res\\board.bmp"
