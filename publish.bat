@@ -28,7 +28,7 @@ set ZIP_NAME=MobiDude.zip
 powershell -Command "Compress-Archive -Path '%BUILD_DIR%\*' -DestinationPath '%BUILD_DIR%\%ZIP_NAME%' -Force"
 
 echo ----------------------------------------
-echo ZIP-file created: %BUILD_DIR%\%ZIP_NAME%
+echo ? Published in: %BUILD_DIR%
 echo ----------------------------------------
 
 pause

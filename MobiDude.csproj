@@ -25,6 +25,20 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!-- JSON-Datei einbinden -->
+    <Content Include="Data\arduino_boards.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+
+    <!-- Alle Dateien im Tools-Ordner rekursiv einbinden -->
+    <Content Include="Tools\**\*.*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+  
+  <ItemGroup>
     <Folder Include="info\" />
   </ItemGroup>
 

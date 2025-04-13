@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MobiDude_V2.Helpers;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Ports;
@@ -114,12 +115,12 @@ namespace MobiDude_V2
 
             if (tool == "ESP32tool")
             {
-                toolPath = Path.Combine("Tools", "ESP-tool", "esptool.exe");
+                toolPath = FilePathHelper.GetToolPath("esptool.exe");
                 args = $"--port {finalPort} write_flash 0x0000 \"{filePath}\"";
             }
             else if (tool == "AVRDude")
             {
-                toolPath = Path.Combine("Tools", "AVRDude", "avrdude.exe");
+                toolPath = FilePathHelper.GetToolPath("avrdude.exe");
                 args = $"-v -p {mcu} -c {protocol} -P {finalPort} -b {baudrate} -D -U flash:w:\"{filePath}\":a";
             }
 

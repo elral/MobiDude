@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
+using MobiDude_V2.Helpers;
 
 namespace MobiDude_V2
 {
@@ -17,8 +18,7 @@ namespace MobiDude_V2
 
     public static class ArduinoBoardLoader
     {
-        private static readonly string BoardJsonPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "arduino_boards.json");
-
+        private static readonly string BoardJsonPath = FilePathHelper.GetDataFilePath();
         public static List<ArduinoBoard> LoadBoards()
         {
             if (!File.Exists(BoardJsonPath))
