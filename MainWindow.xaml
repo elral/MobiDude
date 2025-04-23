@@ -1,7 +1,7 @@
 ﻿<Window x:Class="MobiDude_V2.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="MobiDude Firmware Uploader 2.0.0" Height="310" Width="530"
+        Title="MobiDude Firmware Uploader 2.0.0" Height="450" Width="530"
         Icon="appicon.ico"
         ResizeMode="CanMinimize"
         WindowStartupLocation="CenterScreen">
@@ -12,8 +12,8 @@
             <RowDefinition Height="85"/>
             <RowDefinition Height="20"/>
             <RowDefinition Height="35"/>
-            <RowDefinition Height="30"/>
-            
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="120"/>
         </Grid.RowDefinitions>
 
         <!-- Datei Auswahl -->
@@ -54,5 +54,24 @@
             <Button Content="Terminal" Width="110" Height="25" Margin="5,0" Click="TerminalButton_Click"/>
             <Button Content="Refresh COM-Ports" Width="110" Height="25" Margin="5,0" Click="RefreshComPortListButton_Click"/>
         </StackPanel>
+
+        <!-- Trennlinie -->
+        <Separator Grid.Row="5" Margin="0,5" Background="Gray" Height="1"/>
+        
+        <Border Grid.Row="6" Grid.RowSpan="2" BorderBrush="Gray" BorderThickness="1" CornerRadius="6" Padding="10" Margin="0,10,0,0">
+            <StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                    <Button Content="Open File" Click="OpenSecondFileButton_Click" Width="80" Height="22"/>
+                </StackPanel>
+
+                <!-- Rechteckiger Rahmen nur um das zweite Textfeld -->
+                <Border BorderBrush="DarkGray" BorderThickness="1" CornerRadius="0" Margin="0,0,0,5">
+                    <TextBlock x:Name="SecondSelectedFileText" Width="450" Height="25" Padding="5,2"/>
+                </Border>
+
+                <Button Content="Send" Width="100" Height="25" HorizontalAlignment="Left" Click="SendButton_Click"/>
+            </StackPanel>
+        </Border>
+        
     </Grid>
 </Window>

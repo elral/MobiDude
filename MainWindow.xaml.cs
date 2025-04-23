@@ -169,6 +169,33 @@ namespace MobiDude_V2
                 SerialPortComboBox.SelectedIndex = 0;
             }
         }
+
+        private string secondFilePath;
+
+        private void OpenSecondFileButton_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new Microsoft.Win32.OpenFileDialog();
+            if (dialog.ShowDialog() == true)
+            {
+                secondFilePath = dialog.FileName;
+                SecondSelectedFileText.Text = Path.GetFileName(secondFilePath);
+            }
+        }
+
+        private void SendButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (!string.IsNullOrEmpty(secondFilePath))
+            {
+                // TODO: Auslagern in eigene Klasse
+                // Beispiel: SendFileHandler.Send(secondFilePath);
+                MessageBox.Show($"Sende: {secondFilePath}");
+            }
+            else
+            {
+                MessageBox.Show("Bitte zuerst eine Datei auswählen.");
+            }
+        }
+
     }
 
 }
