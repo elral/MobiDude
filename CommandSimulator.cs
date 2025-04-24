@@ -8,93 +8,81 @@ using System.Windows;
 
 namespace MobiDude_V2
 {
-    public class CommandSender
+    public static class CommandSimulator
     {
-        private CancellationTokenSource? _cancellationTokenSource;
-
-        public async Task SendCommandsFromFileAsync(string filePath, string comPort, bool repeat)
+        public static async Task SendCommandsFromFileAsync(string filePath, string serialPortName, bool repeat, CancellationToken cancellationToken)
         {
             if (!File.Exists(filePath))
             {
-                MessageBox.Show("File not found.");
+                MessageBox.Show("File not found: " + filePath);
                 return;
             }
 
-            _cancellationTokenSource = new CancellationTokenSource();
-            var token = _cancellationTokenSource.Token;
-
             try
             {
-                using SerialPort sp = new SerialPort(comPort, 115200);
-                sp.DtrEnable = true;
-                sp.Open();
+                using SerialPort serialPort = new SerialPort(serialPortName, 9600);
+                serialPort.Encoding = Encoding.ASCII;
+                serialPort.Open();
 
-                var fileLines = File.ReadAllLines(filePath);
-                StringBuilder messageLog = new();
-
-                Task messageBoxTask = Task.Run(() =>
-                {
-                    MessageBox.Show(messageLog.ToString(), "Sending...", MessageBoxButton.OK);
-                    _cancellationTokenSource?.Cancel();
-                });
+                var allLines = File.ReadAllLines(filePath);
+                StringBuilder logBuilder = new StringBuilder();
 
                 do
                 {
-                    foreach (var line in fileLines)
+                    foreach (string line in allLines)
                     {
-                        if (token.IsCancellationRequested)
-                            break;
+                        if (cancellationToken.IsCancellationRequested)
+                            return;
 
                         string trimmed = line.Trim();
-
-                        if (string.IsNullOrEmpty(trimmed))
-                            continue;
+                        if (string.IsNullOrEmpty(trimmed)) continue;
 
                         int semicolonIndex = trimmed.IndexOf(';');
-                        if (semicolonIndex == -1 || semicolonIndex == trimmed.Length - 1)
+                        if (semicolonIndex == -1 || semicolonIndex + 1 >= trimmed.Length)
                             continue;
 
-                        string command = trimmed[..(semicolonIndex + 1)];
-                        string delayString = trimmed[(semicolonIndex + 1)..].Trim();
+                        string commandPart = trimmed.Substring(0, semicolonIndex).Trim();
+                        string delayPart = trimmed.Substring(semicolonIndex + 1).Trim();
 
-                        // Zeichen einzeln senden
-                        foreach (char c in command)
+                        foreach (char c in commandPart)
                         {
-                            if (char.IsWhiteSpace(c))
-                                continue;
+                            if (char.IsWhiteSpace(c)) continue;
 
-                            sp.Write(c.ToString());
-                            messageLog.Append(c);
+                            serialPort.Write(c.ToString());
+                            logBuilder.Append(c);
                         }
 
-                        if (int.TryParse(delayString, out int delay))
+                        // Send semicolon
+                        serialPort.Write(";");
+                        logBuilder.Append(";");
+
+                        if (int.TryParse(delayPart, out int delayMs))
                         {
-                            messageLog.Append($"  (Wait {delay} ms)\n");
-                            await Task.Delay(delay, token);
+                            logBuilder.AppendLine($"   Wait {delayMs} ms");
+                            await Task.Delay(delayMs, cancellationToken);
                         }
                         else
                         {
-                            messageLog.Append("  (Invalid wait time)\n");
+                            logBuilder.AppendLine("   Invalid delay");
                         }
+
+                        Application.Current.Dispatcher.Invoke(() =>
+                        {
+                            MessageBox.Show(logBuilder.ToString(), "Sent Commands");
+                            logBuilder.Clear();
+                        });
                     }
                 }
-                while (repeat && !token.IsCancellationRequested);
-
-                sp.Close();
+                while (repeat && !cancellationToken.IsCancellationRequested);
             }
             catch (OperationCanceledException)
             {
-                // Senden wurde abgebrochen
+                MessageBox.Show("Command sending was canceled.");
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error: {ex.Message}");
+                MessageBox.Show("Error sending commands: " + ex.Message);
             }
-        }
-
-        public void CancelSending()
-        {
-            _cancellationTokenSource?.Cancel();
         }
     }
 }

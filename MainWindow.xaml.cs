@@ -201,13 +201,22 @@ namespace MobiDude_V2
 
             try
             {
-                // Sende den Inhalt der Datei zeichenweise (kannst du noch implementieren)
-                await SendCommandsAsync(SelectedCommandFileText.Text, token);
+                bool repeat = RepeatCheckbox.IsChecked == true;
+
+                await CommandSimulator.SendCommandsFromFileAsync(
+                    SelectedCommandFileText.Text,
+                    SerialPortComboBox.SelectedItem?.ToString() ?? "",
+                    repeat,
+                    token
+                );
             }
             catch (OperationCanceledException)
             {
-                // Wenn die Operation abgebrochen wird, zeige eine Nachricht
-                MessageBox.Show("Operation canceled.");
+                MessageBox.Show("Command sending canceled.");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error: {ex.Message}");
             }
         }
 
