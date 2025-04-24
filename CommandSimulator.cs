@@ -29,6 +29,7 @@ namespace MobiDude_V2
             output($"Opened COM port: {comPort}");
 
             string[] lines = await File.ReadAllLinesAsync(filePath, cancellationToken);
+            string command = "";
 
             do
             {
@@ -53,7 +54,8 @@ namespace MobiDude_V2
                         if (!char.IsWhiteSpace(c))
                         {
                             serialPort.Write(c.ToString());
-                            output(c.ToString());
+                            //output(c.ToString());
+                            command += c;
                         }
 
                         cancellationToken.ThrowIfCancellationRequested();
@@ -61,18 +63,22 @@ namespace MobiDude_V2
 
                     // Semikolon ebenfalls senden
                     serialPort.Write(";");
-                    output(";");
+                    //output(";");
+                    command += command;
 
                     // Warten, wenn Zahl korrekt
                     if (int.TryParse(waitPart, out int waitTime))
                     {
-                        output($"  (Wait {waitTime} ms)");
+                        //output($"  (Wait {waitTime} ms)");
+                        command += $"  (Wait {waitTime} ms)";
                         await Task.Delay(waitTime, cancellationToken);
                     }
                     else
                     {
                         output("  (Invalid wait time)");
                     }
+                    output(command);
+                    command = "";
                 }
             } while (repeat && !cancellationToken.IsCancellationRequested);
 

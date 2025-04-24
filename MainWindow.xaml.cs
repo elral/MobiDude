@@ -283,15 +283,7 @@ namespace MobiDude_V2
             // Zum Beispiel über einen COM-Port oder ähnliche Schnittstellen.
             MessageBox.Show($"Sending: {commandLine}");  // Beispiel
         }
-        /*
-        private void CancelCommandFileButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (cancellationTokenSource != null)
-            {
-                cancellationTokenSource.Cancel();  // Abbruch der laufenden Aufgabe
-            }
-        }
-        */
+
     }
 
 }
