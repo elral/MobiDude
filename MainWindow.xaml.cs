@@ -170,30 +170,40 @@ namespace MobiDude_V2
             }
         }
 
-        private string secondFilePath;
+        private string? commandFilePath;
 
-        private void OpenSecondFileButton_Click(object sender, RoutedEventArgs e)
+        private async void OpenCommandFileButton_Click(object sender, RoutedEventArgs e)
         {
-            var dialog = new Microsoft.Win32.OpenFileDialog();
-            if (dialog.ShowDialog() == true)
+            var openFileDialog = new Microsoft.Win32.OpenFileDialog
             {
-                secondFilePath = dialog.FileName;
-                SecondSelectedFileText.Text = Path.GetFileName(secondFilePath);
+                Filter = "Command Files (*.txt;*.csv)|*.txt;*.csv"
+            };
+
+            if (openFileDialog.ShowDialog() == true)
+            {
+                commandFilePath = openFileDialog.FileName;
+                CommandFileText.Text = System.IO.Path.GetFileName(commandFilePath);
             }
         }
 
-        private void SendButton_Click(object sender, RoutedEventArgs e)
+        private async void SendCommandFileButton_Click(object sender, RoutedEventArgs e)
         {
-            if (!string.IsNullOrEmpty(secondFilePath))
+            if (string.IsNullOrWhiteSpace(commandFilePath) || !File.Exists(commandFilePath))
             {
-                // TODO: Auslagern in eigene Klasse
-                // Beispiel: SendFileHandler.Send(secondFilePath);
-                MessageBox.Show($"Sende: {secondFilePath}");
+                MessageBox.Show("Please select a valid command file first.");
+                return;
             }
-            else
+
+            if (SerialPortComboBox.SelectedItem is not string selectedPort)
             {
-                MessageBox.Show("Bitte zuerst eine Datei auswählen.");
+                MessageBox.Show("Please select a COM port.");
+                return;
             }
+
+            bool repeat = RepeatCheckBox.IsChecked == true;
+
+            var senderObj = new CommandSender();
+            await senderObj.SendCommandsFromFileAsync(commandFilePath, selectedPort, repeat);
         }
 
     }
