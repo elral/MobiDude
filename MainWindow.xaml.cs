@@ -188,6 +188,9 @@ namespace MobiDude_V2
             }
         }
 
+        private UploadWindow? uploadWindow;
+        private CancellationTokenSource? ctsCommand;
+
         private async void SendCommandFileButton_Click(object sender, RoutedEventArgs e)
         {
             if (string.IsNullOrEmpty(SelectedCommandFileText.Text) || !File.Exists(SelectedCommandFileText.Text))
@@ -196,29 +199,64 @@ namespace MobiDude_V2
                 return;
             }
 
+            if (SerialPortComboBox.SelectedItem == null)
+            {
+                MessageBox.Show("Please select a COM port.");
+                return;
+            }
+
             cancellationTokenSource = new CancellationTokenSource();
             var token = cancellationTokenSource.Token;
+            bool repeat = RepeatCheckbox.IsChecked == true;
+
+            var uploadWindow = new UploadWindow();
+            uploadWindow.Show();
 
             try
             {
-                bool repeat = RepeatCheckbox.IsChecked == true;
-
                 await CommandSimulator.SendCommandsFromFileAsync(
                     SelectedCommandFileText.Text,
-                    SerialPortComboBox.SelectedItem?.ToString() ?? "",
+                    SerialPortComboBox.SelectedItem.ToString(),
                     repeat,
-                    token
-                );
+                    token,
+                    text =>
+                    {
+                        uploadWindow.Dispatcher.Invoke(() => uploadWindow.AppendLine(text));
+                    });
+
+                uploadWindow.Dispatcher.Invoke(() =>
+                {
+                    uploadWindow.AppendLine("\nDone.");
+                    uploadWindow.Close();
+                });
             }
             catch (OperationCanceledException)
             {
-                MessageBox.Show("Command sending canceled.");
+                uploadWindow.Dispatcher.Invoke(() =>
+                {
+                    uploadWindow.AppendLine("\nCanceled by user.");
+                    uploadWindow.Close();
+                });
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error: {ex.Message}");
+                uploadWindow.Dispatcher.Invoke(() =>
+                {
+                    uploadWindow.AppendLine($"\nError: {ex.Message}");
+                    uploadWindow.Close();
+                });
             }
         }
+
+        private void CancelCommandFileButton_Click(object sender, RoutedEventArgs e)
+{
+    if (cancellationTokenSource != null && !cancellationTokenSource.IsCancellationRequested)
+    {
+        cancellationTokenSource.Cancel();
+    }
+}
+
+
 
         private async Task SendCommandsAsync(string filePath, CancellationToken token)
         {
@@ -245,7 +283,7 @@ namespace MobiDude_V2
             // Zum Beispiel über einen COM-Port oder ähnliche Schnittstellen.
             MessageBox.Show($"Sending: {commandLine}");  // Beispiel
         }
-
+        /*
         private void CancelCommandFileButton_Click(object sender, RoutedEventArgs e)
         {
             if (cancellationTokenSource != null)
@@ -253,7 +291,7 @@ namespace MobiDude_V2
                 cancellationTokenSource.Cancel();  // Abbruch der laufenden Aufgabe
             }
         }
-
+        */
     }
 
 }

@@ -4,85 +4,80 @@ using System.IO.Ports;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
 
 namespace MobiDude_V2
 {
     public static class CommandSimulator
     {
-        public static async Task SendCommandsFromFileAsync(string filePath, string serialPortName, bool repeat, CancellationToken cancellationToken)
+        public static async Task SendCommandsFromFileAsync(
+            string filePath,
+            string comPort,
+            bool repeat,
+            CancellationToken cancellationToken,
+            Action<string> output)
         {
             if (!File.Exists(filePath))
+                throw new FileNotFoundException("Command file not found.", filePath);
+
+            using var serialPort = new SerialPort(comPort, 9600, Parity.None, 8, StopBits.One)
             {
-                MessageBox.Show("File not found: " + filePath);
-                return;
-            }
+                Encoding = Encoding.ASCII,
+                NewLine = "\n"
+            };
 
-            try
+            serialPort.Open();
+            output($"Opened COM port: {comPort}");
+
+            string[] lines = await File.ReadAllLinesAsync(filePath, cancellationToken);
+
+            do
             {
-                using SerialPort serialPort = new SerialPort(serialPortName, 9600);
-                serialPort.Encoding = Encoding.ASCII;
-                serialPort.Open();
-
-                var allLines = File.ReadAllLines(filePath);
-                StringBuilder logBuilder = new StringBuilder();
-
-                do
+                foreach (string line in lines)
                 {
-                    foreach (string line in allLines)
+                    cancellationToken.ThrowIfCancellationRequested();
+
+                    string trimmedLine = line.Trim();
+                    if (string.IsNullOrWhiteSpace(trimmedLine))
+                        continue;
+
+                    int semicolonIndex = trimmedLine.IndexOf(';');
+                    if (semicolonIndex == -1 || semicolonIndex == trimmedLine.Length - 1)
+                        continue; // Ungültiges Format
+
+                    string commandPart = trimmedLine.Substring(0, semicolonIndex);
+                    string waitPart = trimmedLine.Substring(semicolonIndex + 1).Trim();
+
+                    // Zeichenweise senden (ohne Whitespace)
+                    foreach (char c in commandPart)
                     {
-                        if (cancellationToken.IsCancellationRequested)
-                            return;
-
-                        string trimmed = line.Trim();
-                        if (string.IsNullOrEmpty(trimmed)) continue;
-
-                        int semicolonIndex = trimmed.IndexOf(';');
-                        if (semicolonIndex == -1 || semicolonIndex + 1 >= trimmed.Length)
-                            continue;
-
-                        string commandPart = trimmed.Substring(0, semicolonIndex).Trim();
-                        string delayPart = trimmed.Substring(semicolonIndex + 1).Trim();
-
-                        foreach (char c in commandPart)
+                        if (!char.IsWhiteSpace(c))
                         {
-                            if (char.IsWhiteSpace(c)) continue;
-
                             serialPort.Write(c.ToString());
-                            logBuilder.Append(c);
+                            output(c.ToString());
                         }
 
-                        // Send semicolon
-                        serialPort.Write(";");
-                        logBuilder.Append(";");
+                        cancellationToken.ThrowIfCancellationRequested();
+                    }
 
-                        if (int.TryParse(delayPart, out int delayMs))
-                        {
-                            logBuilder.AppendLine($"   Wait {delayMs} ms");
-                            await Task.Delay(delayMs, cancellationToken);
-                        }
-                        else
-                        {
-                            logBuilder.AppendLine("   Invalid delay");
-                        }
+                    // Semikolon ebenfalls senden
+                    serialPort.Write(";");
+                    output(";");
 
-                        Application.Current.Dispatcher.Invoke(() =>
-                        {
-                            MessageBox.Show(logBuilder.ToString(), "Sent Commands");
-                            logBuilder.Clear();
-                        });
+                    // Warten, wenn Zahl korrekt
+                    if (int.TryParse(waitPart, out int waitTime))
+                    {
+                        output($"  (Wait {waitTime} ms)");
+                        await Task.Delay(waitTime, cancellationToken);
+                    }
+                    else
+                    {
+                        output("  (Invalid wait time)");
                     }
                 }
-                while (repeat && !cancellationToken.IsCancellationRequested);
-            }
-            catch (OperationCanceledException)
-            {
-                MessageBox.Show("Command sending was canceled.");
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error sending commands: " + ex.Message);
-            }
+            } while (repeat && !cancellationToken.IsCancellationRequested);
+
+            serialPort.Close();
+            output("Command sending finished.");
         }
     }
 }
