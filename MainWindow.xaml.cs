@@ -170,40 +170,79 @@ namespace MobiDude_V2
             }
         }
 
-        private string? commandFilePath;
+        // In der MainWindow.xaml.cs
 
-        private async void OpenCommandFileButton_Click(object sender, RoutedEventArgs e)
+        private CancellationTokenSource cancellationTokenSource;
+
+        private void OpenCommandFileButton_Click(object sender, RoutedEventArgs e)
         {
+            // Hier kannst du den OpenFileDialog verwenden, um eine Datei auszuwählen
             var openFileDialog = new Microsoft.Win32.OpenFileDialog
             {
-                Filter = "Command Files (*.txt;*.csv)|*.txt;*.csv"
+                Filter = "Text files (*.txt, *.csv)|*.txt;*.csv"
             };
 
             if (openFileDialog.ShowDialog() == true)
             {
-                commandFilePath = openFileDialog.FileName;
-                CommandFileText.Text = System.IO.Path.GetFileName(commandFilePath);
+                SelectedCommandFileText.Text = openFileDialog.FileName;
             }
         }
 
         private async void SendCommandFileButton_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(commandFilePath) || !File.Exists(commandFilePath))
+            if (string.IsNullOrEmpty(SelectedCommandFileText.Text) || !File.Exists(SelectedCommandFileText.Text))
             {
                 MessageBox.Show("Please select a valid command file first.");
                 return;
             }
 
-            if (SerialPortComboBox.SelectedItem is not string selectedPort)
+            cancellationTokenSource = new CancellationTokenSource();
+            var token = cancellationTokenSource.Token;
+
+            try
             {
-                MessageBox.Show("Please select a COM port.");
-                return;
+                // Sende den Inhalt der Datei zeichenweise (kannst du noch implementieren)
+                await SendCommandsAsync(SelectedCommandFileText.Text, token);
             }
+            catch (OperationCanceledException)
+            {
+                // Wenn die Operation abgebrochen wird, zeige eine Nachricht
+                MessageBox.Show("Operation canceled.");
+            }
+        }
 
-            bool repeat = RepeatCheckBox.IsChecked == true;
+        private async Task SendCommandsAsync(string filePath, CancellationToken token)
+        {
+            var lines = File.ReadAllLines(filePath);
+            foreach (var line in lines)
+            {
+                if (token.IsCancellationRequested)
+                {
+                    // Wenn die Operation abgebrochen wurde, beende die Schleife
+                    break;
+                }
 
-            var senderObj = new CommandSender();
-            await senderObj.SendCommandsFromFileAsync(commandFilePath, selectedPort, repeat);
+                // Hier wird das Senden der Zeichen zeilenweise implementiert (deine Logik)
+                await SendCommandLineAsync(line);
+
+                // Warte ggf. je nach Kommando (dies ist nur ein Beispiel)
+                await Task.Delay(1000);
+            }
+        }
+
+        private async Task SendCommandLineAsync(string commandLine)
+        {
+            // Hier kommt die Logik zum Versenden eines einzelnen Kommandos
+            // Zum Beispiel über einen COM-Port oder ähnliche Schnittstellen.
+            MessageBox.Show($"Sending: {commandLine}");  // Beispiel
+        }
+
+        private void CancelCommandFileButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (cancellationTokenSource != null)
+            {
+                cancellationTokenSource.Cancel();  // Abbruch der laufenden Aufgabe
+            }
         }
 
     }

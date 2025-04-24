@@ -58,23 +58,25 @@
         <!-- Trennlinie -->
         <Separator Grid.Row="5" Margin="0,5" Background="Gray" Height="1"/>
 
-        <Border Grid.Row="6" BorderBrush="Gray" BorderThickness="1" CornerRadius="6" Padding="10" Margin="0,0,0,0">
+        <Border Grid.Row="6" BorderBrush="Gray" BorderThickness="1" CornerRadius="6" Padding="10" Margin="0,5,0,0">
             <StackPanel>
-                <TextBlock Text="Command Simulator" FontWeight="Bold" Margin="0,0,0,5"/>
-
+                <TextBlock Text="Command Simulator" FontWeight="Bold" FontSize="14" Margin="0,0,0,5"/>
                 <Separator Margin="0,0,0,10"/>
-                
+
+                <!-- StackPanel für OpenFile Button und Dateiname -->
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                     <Button Content="Open File" Width="80" Click="OpenCommandFileButton_Click"/>
                 </StackPanel>
 
                 <Border BorderBrush="DarkGray" BorderThickness="1" CornerRadius="0" Margin="0,0,0,5">
-                    <TextBlock x:Name="CommandFileText" Width="450" Height="25" Padding="5,2"/>
+                    <TextBlock x:Name="SelectedCommandFileText" Width="450" Height="25" Padding="5,2"/>
                 </Border>
 
-                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                    <Button Content="Send" Width="80" Click="SendCommandFileButton_Click"/>
-                    <CheckBox x:Name="RepeatCheckBox" Content="Repeat" Margin="10,0,0,0" VerticalAlignment="Center"/>
+                <!-- StackPanel für Send Button und Checkbox -->
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                    <Button Content="Send" Width="80" Height="22" Click="SendCommandFileButton_Click"/>
+                    <CheckBox x:Name="RepeatCheckbox" Content="Repeat" Margin="30,0,0,0" VerticalAlignment="Center"/>
+                    <Button Content="Cancel" Width="80" Height="22" Margin="220,0,0,0" Click="CancelCommandFileButton_Click"/>
                 </StackPanel>
             </StackPanel>
         </Border>
