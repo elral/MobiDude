@@ -175,7 +175,6 @@ namespace MobiDude_V2
                 return;
             }
 
-            //var uploadWindow = new UploadWindow();
             ShowUploadWindow();
             await FirmwareUploader.StartUpload(selectedFilePath, selectedBoard, selectedPort, uploadWindow!);
         }
@@ -226,8 +225,6 @@ namespace MobiDude_V2
             var token = cancellationTokenSource.Token;
             bool repeat = RepeatCheckbox.IsChecked == true;
 
-            //var uploadWindow = new UploadWindow();
-            //uploadWindow.Show();
             ShowUploadWindow();
 
             try
@@ -237,28 +234,25 @@ namespace MobiDude_V2
                     SerialPortComboBox.SelectedItem.ToString(),
                     repeat,
                     token,
-                    text =>
-                    {
-                        uploadWindow.Dispatcher.Invoke(() => uploadWindow.AppendLine(text));
-                    }!);
+                    uploadWindow!);
 
                 uploadWindow.Dispatcher.Invoke(() =>
                 {
-                    uploadWindow.AppendLine("\nDone.");
+                    uploadWindow!.AppendLine("\nDone.");
                 });
             }
             catch (OperationCanceledException)
             {
                 uploadWindow.Dispatcher.Invoke(() =>
                 {
-                    uploadWindow.AppendLine("\nCanceled by user.");
+                    uploadWindow!.AppendLine("\nCanceled by user.");
                 });
             }
             catch (Exception ex)
             {
                 uploadWindow.Dispatcher.Invoke(() =>
                 {
-                    uploadWindow.AppendLine($"\nError: {ex.Message}");
+                    uploadWindow!.AppendLine($"\nError: {ex.Message}");
                 });
             }
         }

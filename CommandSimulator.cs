@@ -4,6 +4,7 @@ using System.IO.Ports;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace MobiDude_V2
 {
@@ -14,10 +15,16 @@ namespace MobiDude_V2
             string comPort,
             bool repeat,
             CancellationToken cancellationToken,
-            Action<string> output)
+            UploadWindow uploadWindow)
         {
             if (!File.Exists(filePath))
                 throw new FileNotFoundException("Command file not found.", filePath);
+            if (string.IsNullOrWhiteSpace(comPort))
+            {
+                uploadWindow.AppendLine("No COM port selected.\n");
+                return;
+            }
+
 
             using var serialPort = new SerialPort(comPort, 9600, Parity.None, 8, StopBits.One)
             {
@@ -26,7 +33,7 @@ namespace MobiDude_V2
             };
 
             serialPort.Open();
-            output($"Opened COM port: {comPort}");
+            uploadWindow.AppendLine($"Opened COM port: {comPort}");
 
             string[] lines = await File.ReadAllLinesAsync(filePath, cancellationToken);
             string command = "";
@@ -54,7 +61,6 @@ namespace MobiDude_V2
                         if (!char.IsWhiteSpace(c))
                         {
                             serialPort.Write(c.ToString());
-                            //output(c.ToString());
                             command += c;
                         }
 
@@ -63,27 +69,26 @@ namespace MobiDude_V2
 
                     // Semikolon ebenfalls senden
                     serialPort.Write(";");
-                    //output(";");
                     command += command;
 
                     // Warten, wenn Zahl korrekt
                     if (int.TryParse(waitPart, out int waitTime))
                     {
-                        //output($"  (Wait {waitTime} ms)");
-                        command += $"  (Wait {waitTime} ms)";
+                        command += $"  → Wait {waitTime} ms";
                         await Task.Delay(waitTime, cancellationToken);
                     }
                     else
                     {
-                        output("  (Invalid wait time)");
+                        command += "  (Invalid wait time)";
                     }
-                    output(command);
+                    uploadWindow.AppendLine(command);
                     command = "";
                 }
             } while (repeat && !cancellationToken.IsCancellationRequested);
 
             serialPort.Close();
-            output("Command sending finished.");
+            uploadWindow.AppendLine("Command sending finished.");
+            uploadWindow.AppendLine("You can close this window now.");
         }
     }
 }
