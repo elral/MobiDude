@@ -7,31 +7,15 @@
         WindowStartupLocation="CenterScreen">
     <Grid Margin="10">
         <Grid.RowDefinitions>
-            <RowDefinition Height="30"/>
-            <RowDefinition Height="60"/>
-            <RowDefinition Height="85"/>
-            <RowDefinition Height="20"/>
-            <RowDefinition Height="35"/>
-            <RowDefinition Height="40"/>
-            <RowDefinition Height="150"/>
+            <RowDefinition Height="90"/>
+            <RowDefinition Height="5"/>
+            <RowDefinition Height="160"/>
+            <RowDefinition Height="5"/>
+            <RowDefinition Height="160"/>
         </Grid.RowDefinitions>
 
-        <!-- Datei Auswahl -->
-        <Border Grid.Row="0" Grid.RowSpan="2" BorderBrush="Gray" BorderThickness="1" CornerRadius="6" Padding="10" Margin="0,0,0,10">
-            <StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                    <Button Content="Open File" Click="OpenFileButton_Click" Width="80" Height="22"/>
-                </StackPanel>
-
-                <!-- Rechteckiger Rahmen nur um das Textfeld -->
-                <Border BorderBrush="DarkGray" BorderThickness="1" CornerRadius="0">
-                    <TextBlock x:Name="SelectedFileText" Width="450" Height="25" Padding="5,2"/>
-                </Border>
-            </StackPanel>
-        </Border>
-
         <!-- COM Port und Arduino Board Dropdowns mit Beschriftung -->
-        <Border Grid.Row="2" BorderBrush="Gray" BorderThickness="1" CornerRadius="6" Padding="10" Margin="0,5,0,5">
+        <Border Grid.Row="0" BorderBrush="Gray" BorderThickness="1" CornerRadius="6" Padding="10" Margin="0,5,0,5">
             <StackPanel VerticalAlignment="Top">
                 <!-- COM-Port Dropdown mit Beschriftung -->
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,5">
@@ -46,19 +30,32 @@
                 </StackPanel>
             </StackPanel>
         </Border>
+        
+        <!-- Datei Auswahl -->
+        <Border Grid.Row="2" Grid.RowSpan="2" BorderBrush="Gray" BorderThickness="1" CornerRadius="6" Padding="10" Margin="0,0,0,10">
+            <StackPanel>
+                <TextBlock Text="Updating FW" FontWeight="Bold" FontSize="14" Margin="0,0,0,5"/>
+                <Separator Margin="0,0,0,10"/>
+                
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                    <Button Content="Open FW File" Click="OpenFileButton_Click" Width="80" Height="22"/>
+                </StackPanel>
 
-        <!-- Buttons für Upload, Get Info, Terminal und COM-Port aktualisieren -->
-        <StackPanel Grid.Row="4" VerticalAlignment="Center" HorizontalAlignment="Center" Orientation="Horizontal">
-            <Button Content="Upload" Width="110" Height="25" Margin="5,0" Click="UploadButton_Click"/>
-            <Button Content="Get Info" Width="110" Height="25" Margin="5,0" Click="GetInfoButton_Click"/>
-            <Button Content="Terminal" Width="110" Height="25" Margin="5,0" Click="TerminalButton_Click"/>
-            <Button Content="Refresh COM-Ports" Width="110" Height="25" Margin="5,0" Click="RefreshComPortListButton_Click"/>
-        </StackPanel>
+                <!-- Rechteckiger Rahmen nur um das Textfeld -->
+                <Border BorderBrush="DarkGray" BorderThickness="1" CornerRadius="0">
+                    <TextBlock x:Name="SelectedFileText" Width="450" Height="25" Padding="5,2"/>
+                </Border>
 
-        <!-- Trennlinie -->
-        <Separator Grid.Row="5" Margin="0,5" Background="Gray" Height="1"/>
+                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Orientation="Horizontal" Margin="0,10,0,0">
+                    <Button Content="Upload" Width="110" Height="25" Margin="5,0" Click="UploadButton_Click"/>
+                    <Button Content="Get Info" Width="110" Height="25" Margin="5,0" Click="GetInfoButton_Click"/>
+                    <Button Content="Terminal" Width="110" Height="25" Margin="5,0" Click="TerminalButton_Click"/>
+                    <Button Content="Refresh COM-Ports" Width="110" Height="25" Margin="5,0" Click="RefreshComPortListButton_Click"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
 
-        <Border Grid.Row="6" BorderBrush="Gray" BorderThickness="1" CornerRadius="6" Padding="10" Margin="0,5,0,0">
+        <Border Grid.Row="4" BorderBrush="Gray" BorderThickness="1" CornerRadius="6" Padding="10" Margin="0,5,0,0">
             <StackPanel>
                 <TextBlock Text="Command Simulator" FontWeight="Bold" FontSize="14" Margin="0,0,0,5"/>
                 <Separator Margin="0,0,0,10"/>
