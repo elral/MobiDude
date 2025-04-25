@@ -12,12 +12,31 @@ namespace MobiDude_V2
     public partial class MainWindow : Window
     {
         private List<ArduinoBoard> boardList = new();
+        private UploadWindow? uploadWindow;
 
         public MainWindow()
         {
             InitializeComponent();
             LoadBoardList();
             RefreshSerialPorts();
+            this.Closed += MainWindow_Closed;
+        }
+
+        private void MainWindow_Closed(object? sender, EventArgs e)
+        {
+            uploadWindow?.Close();
+        }
+        private void ShowUploadWindow()
+        {
+            if (uploadWindow == null || !uploadWindow.IsVisible)
+            {
+                uploadWindow = new UploadWindow();
+                uploadWindow.Show();
+            }
+            else
+            {
+                uploadWindow.Activate(); // Falls schon offen, bring nach vorne
+            }
         }
 
         private void LoadBoardList()
@@ -156,8 +175,9 @@ namespace MobiDude_V2
                 return;
             }
 
-            var uploadWindow = new UploadWindow();
-            await FirmwareUploader.StartUpload(selectedFilePath, selectedBoard, selectedPort, uploadWindow);
+            //var uploadWindow = new UploadWindow();
+            ShowUploadWindow();
+            await FirmwareUploader.StartUpload(selectedFilePath, selectedBoard, selectedPort, uploadWindow!);
         }
 
         private void RefreshComPortListButton_Click(object sender, RoutedEventArgs e)
@@ -169,8 +189,6 @@ namespace MobiDude_V2
                 SerialPortComboBox.SelectedIndex = 0;
             }
         }
-
-        // In der MainWindow.xaml.cs
 
         private CancellationTokenSource cancellationTokenSource;
 
@@ -188,7 +206,6 @@ namespace MobiDude_V2
             }
         }
 
-        private UploadWindow? uploadWindow;
         private CancellationTokenSource? ctsCommand;
 
         private async void SendCommandFileButton_Click(object sender, RoutedEventArgs e)
@@ -209,8 +226,9 @@ namespace MobiDude_V2
             var token = cancellationTokenSource.Token;
             bool repeat = RepeatCheckbox.IsChecked == true;
 
-            var uploadWindow = new UploadWindow();
-            uploadWindow.Show();
+            //var uploadWindow = new UploadWindow();
+            //uploadWindow.Show();
+            ShowUploadWindow();
 
             try
             {
@@ -222,12 +240,11 @@ namespace MobiDude_V2
                     text =>
                     {
                         uploadWindow.Dispatcher.Invoke(() => uploadWindow.AppendLine(text));
-                    });
+                    }!);
 
                 uploadWindow.Dispatcher.Invoke(() =>
                 {
                     uploadWindow.AppendLine("\nDone.");
-                    uploadWindow.Close();
                 });
             }
             catch (OperationCanceledException)
@@ -235,7 +252,6 @@ namespace MobiDude_V2
                 uploadWindow.Dispatcher.Invoke(() =>
                 {
                     uploadWindow.AppendLine("\nCanceled by user.");
-                    uploadWindow.Close();
                 });
             }
             catch (Exception ex)
@@ -243,18 +259,17 @@ namespace MobiDude_V2
                 uploadWindow.Dispatcher.Invoke(() =>
                 {
                     uploadWindow.AppendLine($"\nError: {ex.Message}");
-                    uploadWindow.Close();
                 });
             }
         }
 
         private void CancelCommandFileButton_Click(object sender, RoutedEventArgs e)
-{
-    if (cancellationTokenSource != null && !cancellationTokenSource.IsCancellationRequested)
-    {
-        cancellationTokenSource.Cancel();
-    }
-}
+        {
+            if (cancellationTokenSource != null && !cancellationTokenSource.IsCancellationRequested)
+            {
+                cancellationTokenSource.Cancel();
+            }
+        }
 
 
 
