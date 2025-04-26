@@ -312,34 +312,6 @@ namespace MobiDude_V2
             }
         }
 
-
-
-        private async Task SendCommandsAsync(string filePath, CancellationToken token)
-        {
-            var lines = File.ReadAllLines(filePath);
-            foreach (var line in lines)
-            {
-                if (token.IsCancellationRequested)
-                {
-                    // Wenn die Operation abgebrochen wurde, beende die Schleife
-                    break;
-                }
-
-                // Hier wird das Senden der Zeichen zeilenweise implementiert (deine Logik)
-                await SendCommandLineAsync(line);
-
-                // Warte ggf. je nach Kommando (dies ist nur ein Beispiel)
-                await Task.Delay(1000);
-            }
-        }
-
-        private async Task SendCommandLineAsync(string commandLine)
-        {
-            // Hier kommt die Logik zum Versenden eines einzelnen Kommandos
-            // Zum Beispiel über einen COM-Port oder ähnliche Schnittstellen.
-            MessageBox.Show($"Sending: {commandLine}");  // Beispiel
-        }
-
     }
 
 }
