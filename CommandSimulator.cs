@@ -50,12 +50,12 @@ namespace MobiDude_V2
 
                     int semicolonIndex = trimmedLine.IndexOf(';');
                     if (semicolonIndex == -1 || semicolonIndex == trimmedLine.Length - 1)
-                        continue; // Ungültiges Format
+                        continue; // no valid foramt
 
                     string commandPart = trimmedLine.Substring(0, semicolonIndex);
                     string waitPart = trimmedLine.Substring(semicolonIndex + 1).Trim();
 
-                    // Zeichenweise senden (ohne Whitespace)
+                    // send single characters (without Whitespaces)
                     foreach (char c in commandPart)
                     {
                         if (!char.IsWhiteSpace(c))
@@ -67,10 +67,10 @@ namespace MobiDude_V2
                         cancellationToken.ThrowIfCancellationRequested();
                     }
 
-                    // Semikolon ebenfalls senden
+                    // send ';'
                     serialPort.Write(";");
 
-                    // Warten, wenn Zahl korrekt
+                    // Wait if valid number is found
                     if (int.TryParse(waitPart, out int waitTime))
                     {
                         command += $"  → Wait {waitTime} ms";

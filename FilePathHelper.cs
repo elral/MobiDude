@@ -36,7 +36,7 @@ namespace MobiDude_V2.Helpers
             }
             else
             {
-                // Fallback, falls du noch weitere Tools hinzufügen willst
+                // Fallback, for additional tools
                 toolDir = Path.Combine(GetBasePath(), "Tools");
             }
 
