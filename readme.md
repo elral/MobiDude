@@ -56,9 +56,12 @@ MobiFlight FW must be running on this board.
 ## Command Simulator
 
 A text file can be choosen which gets send to the board running MobiFlight firmware.
-The format must the same which the connector sends. Additionally a waiting time can be added after the semicolon.
-After this time the next command gets send. If you check the `Repeat` Box, the file gets send continously.
-Press the `Cancel` Button to stop sending ion this case.
+The format must the same which the connector sends. Easiest way is to get these commands from the connector with Log-Level `Debug`.
+Copy the line from the connector debug window into a text file and delete everything before `'` and the last two characters.
+Add a waiting time after the semicolon as required. After this time the next command gets send.
+Be aware not to send commands too fast as they must get processed from the board.
+If you check the `Repeat` Box, the file gets send continously.
+Press the `Cancel` Button to stop sending in this case.
 
 ---
 
