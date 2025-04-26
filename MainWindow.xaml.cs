@@ -26,6 +26,12 @@ namespace MobiDude_V2
         {
             uploadWindow?.Close();
         }
+
+        private void ExitButton_Click(object sender, RoutedEventArgs e)
+        {
+            Application.Current.Shutdown();
+        }
+
         private void ShowUploadWindow()
         {
             if (uploadWindow == null || !uploadWindow.IsVisible)

@@ -1,7 +1,7 @@
 ﻿<Window x:Class="MobiDude_V2.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="MobiDude Firmware Uploader 2.0.0" Height="500" Width="530"
+        Title="MobiDude Firmware Uploader 2.0.0" Height="550" Width="530"
         Icon="appicon.ico"
         ResizeMode="CanMinimize"
         WindowStartupLocation="CenterScreen">
@@ -12,6 +12,7 @@
             <RowDefinition Height="160"/>
             <RowDefinition Height="5"/>
             <RowDefinition Height="160"/>
+            <RowDefinition Height="60"/>
         </Grid.RowDefinitions>
 
         <!-- COM Port und Arduino Board Dropdowns mit Beschriftung -->
@@ -72,11 +73,17 @@
                 <!-- StackPanel für Send Button und Checkbox -->
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
                     <Button Content="Send" Width="80" Height="22" Click="SendCommandFileButton_Click"/>
+                    <Button Content="Cancel" Width="80" Height="22" Margin="20,0,0,0" Click="CancelCommandFileButton_Click"/>
                     <CheckBox x:Name="RepeatCheckbox" Content="Repeat" Margin="30,0,0,0" VerticalAlignment="Center"/>
-                    <Button Content="Cancel" Width="80" Height="22" Margin="220,0,0,0" Click="CancelCommandFileButton_Click"/>
                 </StackPanel>
             </StackPanel>
         </Border>
 
+        <Border Grid.Row="5" Margin="0,10,0,5">
+            <Grid>
+                <Button Content="Exit" Width="80" Height="25" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,5" Click="ExitButton_Click"/>
+            </Grid>
+        </Border>
+        
     </Grid>
 </Window>
