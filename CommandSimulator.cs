@@ -69,7 +69,6 @@ namespace MobiDude_V2
 
                     // Semikolon ebenfalls senden
                     serialPort.Write(";");
-                    command += command;
 
                     // Warten, wenn Zahl korrekt
                     if (int.TryParse(waitPart, out int waitTime))
