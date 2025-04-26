@@ -6,6 +6,8 @@ using System.Text.Json;
 using System.Threading;
 using System.Windows;
 using Microsoft.Win32;
+using System.Management;
+using System.Windows.Media;
 
 namespace MobiDude_V2
 {
@@ -17,9 +19,44 @@ namespace MobiDude_V2
         public MainWindow()
         {
             InitializeComponent();
+            StartUsbDeviceWatcher();
             LoadBoardList();
             RefreshSerialPorts();
             this.Closed += MainWindow_Closed;
+        }
+
+        private ManagementEventWatcher insertWatcher;
+        private ManagementEventWatcher removeWatcher;
+
+        protected override void OnClosed(EventArgs e)
+        {
+            insertWatcher?.Stop();
+            removeWatcher?.Stop();
+            insertWatcher?.Dispose();
+            removeWatcher?.Dispose();
+
+            base.OnClosed(e);
+        }
+
+        private void StartUsbDeviceWatcher()
+        {
+            try
+            {
+                WqlEventQuery insertQuery = new WqlEventQuery("SELECT * FROM Win32_DeviceChangeEvent WHERE EventType = 2");
+                WqlEventQuery removeQuery = new WqlEventQuery("SELECT * FROM Win32_DeviceChangeEvent WHERE EventType = 3");
+
+                insertWatcher = new ManagementEventWatcher(insertQuery);
+                insertWatcher.EventArrived += (s, e) => Dispatcher.Invoke(RefreshSerialPorts);
+                insertWatcher.Start();
+
+                removeWatcher = new ManagementEventWatcher(removeQuery);
+                removeWatcher.EventArrived += (s, e) => Dispatcher.Invoke(RefreshSerialPorts);
+                removeWatcher.Start();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error starting USB device watcher: {ex.Message}");
+            }
         }
 
         private void MainWindow_Closed(object? sender, EventArgs e)
@@ -66,8 +103,12 @@ namespace MobiDude_V2
 
         private void RefreshSerialPorts()
         {
-            SerialPortComboBox.ItemsSource = SerialPort.GetPortNames();
-            SerialPortComboBox.SelectedIndex = 0;
+            //SerialPortComboBox.ItemsSource = SerialPort.GetPortNames();
+            //SerialPortComboBox.SelectedIndex = 0;
+            var ports = SerialPort.GetPortNames();
+            SerialPortComboBox.ItemsSource = ports;
+            if (ports.Length > 0)
+                SerialPortComboBox.SelectedItem = ports[0];
         }
 
         private void OpenFileButton_Click(object sender, RoutedEventArgs e)
