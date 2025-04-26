@@ -52,7 +52,7 @@
             <Button Content="Upload" Width="110" Height="25" Margin="5,0" Click="UploadButton_Click"/>
             <Button Content="Get Info" Width="110" Height="25" Margin="5,0" Click="GetInfoButton_Click"/>
             <Button Content="Terminal" Width="110" Height="25" Margin="5,0" Click="TerminalButton_Click"/>
-            <Button Content="Refresh COM-Ports" Width="110" Height="25" Margin="5,0" Click="RefreshComPortListButton_Click"/>
+            <Button Content="Exit" Width="110" Height="25" Margin="5,0" Click="ExitButton_Click"/>
         </StackPanel>
     </Grid>
 </Window>
