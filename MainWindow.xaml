@@ -1,7 +1,7 @@
 ﻿<Window x:Class="MobiDude_V2.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="MobiDude Firmware Uploader 2.0.0" Height="530" Width="530"
+        Title="MobiDude Firmware Uploader 2.1 - CS" Height="530" Width="530"
         Icon="appicon.ico"
         ResizeMode="CanMinimize"
         WindowStartupLocation="CenterScreen">
