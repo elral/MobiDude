@@ -447,9 +447,55 @@ namespace MobiDude_V2
             }
         }
 
-        private void Flash_FW_Button_Click(object sender, RoutedEventArgs e)
+        private async void Flash_FW_Button_Click(object sender, RoutedEventArgs e)
         {
+            if (ArduinoBoardComboBox.SelectedItem is not ArduinoBoard selectedBoard)
+            {
+                MessageBox.Show("Please choose a board first.");
+                return;
+            }
 
+            if (SerialPortComboBox.SelectedItem is not string selectedPort)
+            {
+                MessageBox.Show("Please choose a COM-Port.");
+                return;
+            }
+
+            string FWFileName = selectedBoard.MobiFlightFW;
+            if (string.IsNullOrEmpty(FWFileName))
+            {
+                MessageBox.Show("This board has no MobiFlight Firmware file defined.");
+                return;
+            }
+
+            string baseDir = AppContext.BaseDirectory;
+            string resetFilePath = Path.Combine(baseDir, "Data", "MobiFlightFW", FWFileName);
+
+            if (!File.Exists(resetFilePath))
+            {
+                MessageBox.Show($"MobiFlight Firmware file not found:\n{resetFilePath}");
+                return;
+            }
+
+            ShowUploadWindow();
+            uploadWindow!.AppendLine("Starting flashing the FW...");
+
+            try
+            {
+                await FirmwareUploader.StartUpload(
+                    resetFilePath,
+                    selectedBoard,
+                    selectedPort,
+                    uploadWindow!
+                );
+
+                uploadWindow!.AppendLine("\n\rFlashing firmware finished.");
+                uploadWindow!.AppendLine("\n\rYou can now close this window.");
+            }
+            catch (Exception ex)
+            {
+                uploadWindow!.AppendLine($"Error during flashing FW: {ex.Message}");
+            }
         }
     }
 }
