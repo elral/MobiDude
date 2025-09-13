@@ -312,15 +312,130 @@ namespace MobiDude_V2
             }
         }
 
-        private void DumpEEPROM_Button_Click(object sender, RoutedEventArgs e)
+        private async void DumpEEPROM_Button_Click(object sender, RoutedEventArgs e)
         {
+            if (ArduinoBoardComboBox.SelectedItem is not ArduinoBoard selectedBoard)
+            {
+                MessageBox.Show("Please choose a board.");
+                return;
+            }
 
+            if (SerialPortComboBox.SelectedItem is not string selectedPort)
+            {
+                MessageBox.Show("Please choose a COM-Port.");
+                return;
+            }
+
+            // JSON nach dem Dump-Filename durchsuchen
+            string dumpFileName = selectedBoard.EEPROMdump;
+            if (string.IsNullOrEmpty(dumpFileName))
+            {
+                MessageBox.Show("This board has no EEPROM dump file defined.");
+                return;
+            }
+
+            // Dump-Hexfile liegt unter Data/DumpEEPROM/
+            string baseDir = AppContext.BaseDirectory;
+            string dumpFilePath = Path.Combine(baseDir, "Data", "DumpEEPROM", dumpFileName);
+
+            if (!File.Exists(dumpFilePath))
+            {
+                MessageBox.Show($"EEPROM dump file not found:\n{dumpFilePath}");
+                return;
+            }
+
+            ShowUploadWindow();
+            uploadWindow!.AppendLine("Starting EEPROM dump upload...");
+
+            // Flashen
+            await FirmwareUploader.StartUpload(dumpFilePath, selectedBoard, selectedPort, uploadWindow!);
+
+            uploadWindow!.AppendLine("EEPROM dump upload finished.");
+            uploadWindow!.AppendLine("Connecting to board to capture dump output...");
+
+            // Seriell verbinden und in Data/DumpEEPROM.txt schreiben
+            try
+            {
+                using var sp = new SerialPort(selectedPort, 115200, Parity.None, 8, StopBits.One)
+                {
+                    ReadTimeout = 2000,
+                    WriteTimeout = 1000
+                };
+                sp.Open();
+                sp.DtrEnable = true;
+                Thread.Sleep(2000);
+
+                string logFile = Path.Combine(baseDir, "DumpEEPROM.txt");
+                using var writer = new StreamWriter(logFile, false, Encoding.UTF8);
+
+                while (true)
+                {
+                    string line = sp.ReadLine();
+                    uploadWindow.AppendLine(line);
+                    writer.WriteLine(line);
+                    writer.Flush();
+                }
+            }
+            catch (TimeoutException)
+            {
+                uploadWindow.AppendLine("EEPROM dump completed. Output written to Data/DumpEEPROM.txt");
+            }
+            catch (Exception ex)
+            {
+                uploadWindow.AppendLine($"Error during EEPROM dump: {ex.Message}");
+            }
         }
 
-        private void ResetEEPROM_Button_Click(object sender, RoutedEventArgs e)
-        {
 
+        private async void ResetEEPROM_Button_Click(object sender, RoutedEventArgs e)
+        {
+            if (ArduinoBoardComboBox.SelectedItem is not ArduinoBoard selectedBoard)
+            {
+                MessageBox.Show("Please choose a board first.");
+                return;
+            }
+
+            if (SerialPortComboBox.SelectedItem is not string selectedPort)
+            {
+                MessageBox.Show("Please choose a COM-Port.");
+                return;
+            }
+
+            string resetFileName = selectedBoard.EEPROMclear; // ⚡ JSON-Feld nutzen
+            if (string.IsNullOrEmpty(resetFileName))
+            {
+                MessageBox.Show("This board has no EEPROM clear file defined.");
+                return;
+            }
+
+            string baseDir = AppContext.BaseDirectory;
+            string resetFilePath = Path.Combine(baseDir, "Data", "DumpEEPROM", resetFileName);
+
+            if (!File.Exists(resetFilePath))
+            {
+                MessageBox.Show($"EEPROM clear file not found:\n{resetFilePath}");
+                return;
+            }
+
+            ShowUploadWindow();
+            uploadWindow!.AppendLine("Starting EEPROM clear...");
+
+            try
+            {
+                await FirmwareUploader.StartUpload(
+                    resetFilePath,
+                    selectedBoard,
+                    selectedPort,
+                    uploadWindow! // Meldungen direkt ins Fenster
+                );
+
+                uploadWindow.AppendLine("EEPROM clear finished.");
+                uploadWindow.AppendLine("You can now close this window.");
+            }
+            catch (Exception ex)
+            {
+                uploadWindow!.AppendLine($"Error during EEPROM clear: {ex.Message}");
+            }
         }
     }
-
 }

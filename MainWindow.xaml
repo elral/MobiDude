@@ -25,9 +25,9 @@
                     <TextBlock Text="Arduino-Board" VerticalAlignment="Center" Margin="0,0,10,0" Width="90"/>
                     <ComboBox x:Name="ArduinoBoardComboBox" Width="180" DisplayMemberPath="Name"/>
                 </StackPanel>
-                <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Margin="0,15,10,0" Width="291">
-                    <Button Content="Dump EEPROM" Click="DumpEEPROM_Button_Click" Width="100" Height="22" Margin="5,0"/>
-                    <Button Content="Reset EEPROM" Click="ResetEEPROM_Button_Click" Width="100" Height="22" Margin="5,0"/>
+                <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Margin="5,15,0,0" Width="291">
+                    <Button Content="Dump EEPROM" Click="DumpEEPROM_Button_Click" Width="100" Height="22" Margin="0,0"/>
+                    <Button Content="Reset EEPROM" Click="ResetEEPROM_Button_Click" Width="100" Height="22" Margin="20,0"/>
                 </StackPanel>
             </StackPanel>
         </Border>

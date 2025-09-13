@@ -17,5 +17,14 @@ namespace MobiDude_V2
                 OutputTextBox.ScrollToEnd();
             });
         }
+
+        public void AppendText(string text)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                OutputTextBox.AppendText(text);
+                OutputTextBox.ScrollToEnd();
+            });
+        }
     }
 }
