@@ -4,76 +4,107 @@
     "MCU": "atmega2560",
     "Tool": "AVRDude",
     "Protocol": "wiring",
-    "Baudrate": "115200"
+    "Baudrate": "115200",
+    "EEPROMclear": "ClearEEPROM_mega_1_0_2.hex",
+    "EEPROMdump": "dumpEEPROM.arduino_mega_1_0_2.hex"
   },
   {
     "Name": "ProMicro",
     "MCU": "atmega32u4",
     "Tool": "AVRDude",
     "Protocol": "avr109",
-    "Baudrate": "57600"
+    "Baudrate": "57600",
+    "EEPROMclear": "ClearEEPROM_promicro_1_0_2.hex",
+    "EEPROMdump": "dumpEEPROM.arduino_promicro_1_0_2.hex"
   },
   {
     "Name": "Uno",
     "MCU": "atmega328p",
     "Tool": "AVRDude",
     "Protocol": "arduino",
-    "Baudrate": "115200"
+    "Baudrate": "115200",
+    "EEPROMclear": "ClearEEPROM_uno_1_0_2.hex",
+    "EEPROMdump": "dumpEEPROM.arduino_uno_1_0_2.hex"
   },
   {
     "Name": "Nano",
     "MCU": "atmega328p",
     "Tool": "AVRDude",
     "Protocol": "arduino",
-    "Baudrate": "115200"
+    "Baudrate": "115200",
+    "EEPROMclear": "ClearEEPROM_nano_1_0_2.hex",
+    "EEPROMdump": "dumpEEPROM.arduino_nano_1_0_2.hex"
   },
   {
     "Name": "Nano old Bootloader",
     "MCU": "atmega328p",
     "Tool": "AVRDude",
     "Protocol": "arduino",
-    "Baudrate": "57600"
+    "Baudrate": "57600",
+    "EEPROMclear": "ClearEEPROM_nano_1_0_2.hex",
+    "EEPROMdump": "dumpEEPROM.arduino_nano_1_0_2.hex"
   },
   {
     "Name": "Mini",
     "MCU": "atmega328p",
     "Tool": "AVRDude",
     "Protocol": "arduino",
-    "Baudrate": "115200"
+    "Baudrate": "115200",
+    "EEPROMclear": "ClearEEPROM_mini_1_0_2.hex",
+    "EEPROMdump": "dumpEEPROM.arduino_mini_1_0_2.hex"
   },
   {
     "Name": "Pro/Mini",
     "MCU": "atmega328p",
     "Tool": "AVRDude",
     "Protocol": "arduino",
-    "Baudrate": "57600"
+    "Baudrate": "57600",
+    "EEPROMclear": "ClearEEPROM_mini_1_0_2.hex",
+    "EEPROMdump": "dumpEEPROM.arduino_mini_1_0_2.hex"
   },
   {
     "Name": "------",
     "MCU": "",
     "Tool": "none",
     "Protocol": "",
-    "Baudrate": ""
+    "Baudrate": "",
+    "EEPROMclear": "",
+    "EEPROMdump": ""
   },
   {
     "Name": "ESP32-S2/S3",
     "MCU": "ESP32-S2",
     "Tool": "ESP32tool",
     "Protocol": "",
-    "Baudrate": ""
+    "Baudrate": "",
+    "EEPROMclear": "",
+    "EEPROMdump": ""
   },
   {
     "Name": "------",
     "MCU": "",
     "Tool": "none",
     "Protocol": "",
-    "Baudrate": ""
+    "Baudrate": "",
+    "EEPROMclear": "",
+    "EEPROMdump": ""
   },
   {
     "Name": "Raspberry Pico",
     "MCU": "Pico",
     "Tool": "Picotool",
     "Protocol": "",
-    "Baudrate": ""
+    "Baudrate": "",
+    "EEPROMclear": "ClearEEPROM_raspberrypico_1_0_2.uf2",
+    "EEPROMdump": "dumpEEPROM.arduino_raspberrypico_1_0_2.uf2"
+  },
+  {
+    "Name": "Raspberry Pico2",
+    "MCU": "Pico",
+    "Tool": "Picotool",
+    "Protocol": "",
+    "Baudrate": "",
+    "EEPROMclear": "ClearEEPROM_raspberrypico2_1_0_2.uf2",
+    "EEPROMdump": "dumpEEPROM.arduino_raspberrypico2_1_0_2.uf2"
   }
 ]
