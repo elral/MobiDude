@@ -6,7 +6,8 @@
     "Protocol": "wiring",
     "Baudrate": "115200",
     "EEPROMclear": "ClearEEPROM_mega_1_0_2.hex",
-    "EEPROMdump": "dumpEEPROM.arduino_mega_1_0_2.hex"
+    "EEPROMdump": "dumpEEPROM.arduino_mega_1_0_2.hex",
+    "MobiFlightFW": "mobiflight_mega_2_5_1.hex"
   },
   {
     "Name": "ProMicro",
@@ -15,7 +16,8 @@
     "Protocol": "avr109",
     "Baudrate": "57600",
     "EEPROMclear": "ClearEEPROM_promicro_1_0_2.hex",
-    "EEPROMdump": "dumpEEPROM.arduino_promicro_1_0_2.hex"
+    "EEPROMdump": "dumpEEPROM.arduino_promicro_1_0_2.hex",
+    "MobiFlightFW": "mobiflight_micro_2_5_1.hex"
   },
   {
     "Name": "Uno",
@@ -24,7 +26,8 @@
     "Protocol": "arduino",
     "Baudrate": "115200",
     "EEPROMclear": "ClearEEPROM_uno_1_0_2.hex",
-    "EEPROMdump": "dumpEEPROM.arduino_uno_1_0_2.hex"
+    "EEPROMdump": "dumpEEPROM.arduino_uno_1_0_2.hex",
+    "MobiFlightFW": "mobiflight_uno_2_5_1.hex"
   },
   {
     "Name": "Nano",
@@ -33,7 +36,8 @@
     "Protocol": "arduino",
     "Baudrate": "115200",
     "EEPROMclear": "ClearEEPROM_nano_1_0_2.hex",
-    "EEPROMdump": "dumpEEPROM.arduino_nano_1_0_2.hex"
+    "EEPROMdump": "dumpEEPROM.arduino_nano_1_0_2.hex",
+    "MobiFlightFW": "mobiflight_nano_2_5_1.hex"
   },
   {
     "Name": "Nano old Bootloader",
@@ -42,7 +46,8 @@
     "Protocol": "arduino",
     "Baudrate": "57600",
     "EEPROMclear": "ClearEEPROM_nano_1_0_2.hex",
-    "EEPROMdump": "dumpEEPROM.arduino_nano_1_0_2.hex"
+    "EEPROMdump": "dumpEEPROM.arduino_nano_1_0_2.hex",
+    "MobiFlightFW": "mobiflight_nano_2_5_1.hex"
   },
   {
     "Name": "Mini",
@@ -51,7 +56,8 @@
     "Protocol": "arduino",
     "Baudrate": "115200",
     "EEPROMclear": "ClearEEPROM_mini_1_0_2.hex",
-    "EEPROMdump": "dumpEEPROM.arduino_mini_1_0_2.hex"
+    "EEPROMdump": "dumpEEPROM.arduino_mini_1_0_2.hex",
+    "MobiFlightFW": ""
   },
   {
     "Name": "Pro/Mini",
@@ -60,7 +66,8 @@
     "Protocol": "arduino",
     "Baudrate": "57600",
     "EEPROMclear": "ClearEEPROM_mini_1_0_2.hex",
-    "EEPROMdump": "dumpEEPROM.arduino_mini_1_0_2.hex"
+    "EEPROMdump": "dumpEEPROM.arduino_mini_1_0_2.hex",
+    "MobiFlightFW": ""
   },
   {
     "Name": "------",
@@ -69,7 +76,8 @@
     "Protocol": "",
     "Baudrate": "",
     "EEPROMclear": "",
-    "EEPROMdump": ""
+    "EEPROMdump": "",
+    "MobiFlightFW": ""
   },
   {
     "Name": "ESP32-S2/S3",
@@ -78,7 +86,8 @@
     "Protocol": "",
     "Baudrate": "",
     "EEPROMclear": "",
-    "EEPROMdump": ""
+    "EEPROMdump": "",
+    "MobiFlightFW": ""
   },
   {
     "Name": "------",
@@ -87,7 +96,8 @@
     "Protocol": "",
     "Baudrate": "",
     "EEPROMclear": "",
-    "EEPROMdump": ""
+    "EEPROMdump": "",
+    "MobiFlightFW": ""
   },
   {
     "Name": "Raspberry Pico",
@@ -95,8 +105,9 @@
     "Tool": "Picotool",
     "Protocol": "",
     "Baudrate": "",
-    "EEPROMclear": "ClearEEPROM_raspberrypico_1_0_2.uf2",
-    "EEPROMdump": "dumpEEPROM.arduino_raspberrypico_1_0_2.uf2"
+    "EEPROMclear": "reset.raspberry_pico_flash_nuke.uf2",
+    "EEPROMdump": "dumpEEPROM.arduino_raspberrypico_1_0_2.uf2",
+    "MobiFlightFW": "mobiflight_raspberrypico_2_5_1.uf2"
   },
   {
     "Name": "Raspberry Pico2",
@@ -105,6 +116,7 @@
     "Protocol": "",
     "Baudrate": "",
     "EEPROMclear": "ClearEEPROM_raspberrypico2_1_0_2.uf2",
-    "EEPROMdump": "dumpEEPROM.arduino_raspberrypico2_1_0_2.uf2"
+    "EEPROMdump": "dumpEEPROM.arduino_raspberrypico2_1_0_2.uf2",
+    "MobiFlightFW": ""
   }
 ]

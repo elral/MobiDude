@@ -14,6 +14,7 @@ namespace MobiDude_V2
         public string Baudrate { get; set; }
         public string EEPROMclear { get; set; }
         public string EEPROMdump { get; set; }
+        public string MobiFlightFW { get; set; }
 
         public override string ToString() => Name;
     }

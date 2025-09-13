@@ -446,5 +446,10 @@ namespace MobiDude_V2
                 uploadWindow!.AppendLine($"Error during EEPROM clear: {ex.Message}");
             }
         }
+
+        private void Flash_FW_Button_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

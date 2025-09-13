@@ -36,7 +36,6 @@
     <Content Include="Data\ClearEEPROM\ClearEEPROM_nano_1_0_2.hex" />
     <Content Include="Data\ClearEEPROM\ClearEEPROM_promicro_1_0_2.hex" />
     <Content Include="Data\ClearEEPROM\ClearEEPROM_raspberrypico2_1_0_2.uf2" />
-    <Content Include="Data\ClearEEPROM\ClearEEPROM_raspberrypico_1_0_2.uf2" />
     <Content Include="Data\ClearEEPROM\ClearEEPROM_uno_1_0_2.hex" />
     <Content Include="Data\DumpEEPROM\dumpEEPROM.arduino_mega_1_0_2.hex" />
     <Content Include="Data\DumpEEPROM\dumpEEPROM.arduino_mini_1_0_2.hex" />
@@ -54,6 +53,7 @@
   </ItemGroup>
   
   <ItemGroup>
+    <Folder Include="Data\MobiFlightFW\" />
     <Folder Include="info\" />
   </ItemGroup>
 
