@@ -17,8 +17,8 @@ dotnet publish MobiDude.csproj -c Release -r win-x64 --self-contained true --out
 REM Optional: delete .pdb files (not required for Release)
 del /q %BUILD_DIR%\*.pdb >nul 2>&1
 
-REM copy JSON file
-xcopy /Y /I /F ".\Data\arduino_boards.json" "%BUILD_DIR%\Data\"
+REM copy Data folder recursiv
+xcopy /E /Y /I /F ".\Data" "%BUILD_DIR%\Data\"
 
 REM copy Tools folder recursiv
 xcopy /E /Y /I /F ".\Tools" "%BUILD_DIR%\Tools\"
