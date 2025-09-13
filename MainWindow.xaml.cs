@@ -14,6 +14,7 @@ namespace MobiDude_V2
     public partial class MainWindow : Window
     {
         private List<ArduinoBoard> boardList = new();
+        private UploadWindow? uploadWindow;
 
         public MainWindow()
         {
@@ -21,11 +22,7 @@ namespace MobiDude_V2
             StartUsbDeviceWatcher();
             LoadBoardList();
             RefreshSerialPorts();
-        }
-
-        private void ExitButton_Click(object sender, RoutedEventArgs e)
-        {
-            Application.Current.Shutdown();
+            this.Closed += MainWindow_Closed;
         }
 
         private ManagementEventWatcher insertWatcher;
@@ -59,6 +56,29 @@ namespace MobiDude_V2
             catch (Exception ex)
             {
                 MessageBox.Show($"Error starting USB device watcher: {ex.Message}");
+            }
+        }
+
+        private void MainWindow_Closed(object? sender, EventArgs e)
+        {
+            uploadWindow?.Close();
+        }
+
+        private void ExitButton_Click(object sender, RoutedEventArgs e)
+        {
+            Application.Current.Shutdown();
+        }
+
+        private void ShowUploadWindow()
+        {
+            if (uploadWindow == null || !uploadWindow.IsVisible)
+            {
+                uploadWindow = new UploadWindow();
+                uploadWindow.Show();
+            }
+            else
+            {
+                uploadWindow.Activate(); // Falls schon offen, bring nach vorne
             }
         }
 
@@ -202,8 +222,94 @@ namespace MobiDude_V2
                 return;
             }
 
-            var uploadWindow = new UploadWindow();
-            await FirmwareUploader.StartUpload(selectedFilePath, selectedBoard, selectedPort, uploadWindow);
+            ShowUploadWindow();
+            await FirmwareUploader.StartUpload(selectedFilePath, selectedBoard, selectedPort, uploadWindow!);
+        }
+
+        private void RefreshComPortListButton_Click(object sender, RoutedEventArgs e)
+        {
+            var comPorts = SerialPort.GetPortNames();
+            SerialPortComboBox.ItemsSource = comPorts;
+            if (comPorts.Length > 0 && SerialPortComboBox.SelectedItem == null)
+            {
+                SerialPortComboBox.SelectedIndex = 0;
+            }
+        }
+
+        private CancellationTokenSource cancellationTokenSource;
+
+        private void OpenCommandFileButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Hier kannst du den OpenFileDialog verwenden, um eine Datei auszuwählen
+            var openFileDialog = new Microsoft.Win32.OpenFileDialog
+            {
+                Filter = "Text files (*.txt, *.csv)|*.txt;*.csv"
+            };
+
+            if (openFileDialog.ShowDialog() == true)
+            {
+                SelectedCommandFileText.Text = openFileDialog.FileName;
+            }
+        }
+
+        private CancellationTokenSource? ctsCommand;
+
+        private async void SendCommandFileButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (string.IsNullOrEmpty(SelectedCommandFileText.Text) || !File.Exists(SelectedCommandFileText.Text))
+            {
+                MessageBox.Show("Please select a valid command file first.");
+                return;
+            }
+
+            if (SerialPortComboBox.SelectedItem == null)
+            {
+                MessageBox.Show("Please select a COM port.");
+                return;
+            }
+
+            cancellationTokenSource = new CancellationTokenSource();
+            var token = cancellationTokenSource.Token;
+            bool repeat = RepeatCheckbox.IsChecked == true;
+
+            ShowUploadWindow();
+
+            try
+            {
+                await CommandSimulator.SendCommandsFromFileAsync(
+                    SelectedCommandFileText.Text,
+                    SerialPortComboBox.SelectedItem.ToString(),
+                    repeat,
+                    token,
+                    uploadWindow!);
+
+                uploadWindow.Dispatcher.Invoke(() =>
+                {
+                    uploadWindow!.AppendLine("\nDone.");
+                });
+            }
+            catch (OperationCanceledException)
+            {
+                uploadWindow.Dispatcher.Invoke(() =>
+                {
+                    uploadWindow!.AppendLine("\nCanceled by user.");
+                });
+            }
+            catch (Exception ex)
+            {
+                uploadWindow.Dispatcher.Invoke(() =>
+                {
+                    uploadWindow!.AppendLine($"\nError: {ex.Message}");
+                });
+            }
+        }
+
+        private void CancelCommandFileButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (cancellationTokenSource != null && !cancellationTokenSource.IsCancellationRequested)
+            {
+                cancellationTokenSource.Cancel();
+            }
         }
 
     }

@@ -1,12 +1,12 @@
 ﻿using System.Windows;
 
-namespace MobiDude_V2 // Hier sollte dein Projektname oder Namespace stehen
+namespace MobiDude_V2
 {
     public partial class InfoWindow : Window
     {
         public InfoWindow(string info, string config)
         {
-            InitializeComponent(); // Diese Methode lädt das Layout aus der XAML
+            InitializeComponent();
             InfoTextBox.Text = info;
             ConfigTextBox.Text = config;
         }

@@ -48,6 +48,21 @@ Afterwords upload your firmware file again.
 A terminal program is included to communicate with the board via a serial connection.
 This can be used also for boards which are not listed above but the Mobiflight firmware is running on.
 
+## Get Info
+
+Pressing this button will connect to the choosen COM port and getting the `Info` and `Config` from the board.
+MobiFlight FW must be running on this board.
+
+## Command Simulator
+
+A text file can be choosen which gets send to the board running MobiFlight firmware.
+The format must the same which the connector sends. Easiest way is to get these commands from the connector with Log-Level `Debug`.
+Copy the line from the connector debug window into a text file and delete everything before `'` and the last two characters.
+Add a waiting time after the semicolon as required. After this time the next command gets send.
+Be aware not to send commands too fast as they must get processed from the board.
+If you check the `Repeat` Box, the file gets send continously.
+Press the `Cancel` Button to stop sending in this case.
+
 ---
 
 ### This package includes next open-source binaries:
