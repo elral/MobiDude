@@ -312,6 +312,15 @@ namespace MobiDude_V2
             }
         }
 
+        private void DumpEEPROM_Button_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void ResetEEPROM_Button_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 
 }
