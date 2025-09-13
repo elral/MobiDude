@@ -48,26 +48,31 @@
             </StackPanel>
         </Border>
 
-        <Border Grid.Row="2" BorderBrush="Gray" BorderThickness="1" CornerRadius="6" Padding="10" Margin="0,7,0,1">
-            <StackPanel>
-                <TextBlock Text="Flashing Firmware file" FontWeight="Bold" FontSize="14" Margin="0,0,0,5"/>
-                <Separator Margin="0,0,0,10"/>
-                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                    <Button Content="Open FW File" Click="OpenFileButton_Click" Width="80" Height="22"/>
-                </StackPanel>
-                <Border BorderBrush="DarkGray" BorderThickness="1" CornerRadius="0">
-                    <TextBlock x:Name="SelectedFileText" Width="450" Height="25" Padding="5,2"/>
-                </Border>
-                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Orientation="Horizontal" Margin="0,10,0,0">
-                    <Button Content="Upload" Width="110" Height="25" Margin="5,0" Click="UploadButton_Click"/>
-                </StackPanel>
-            </StackPanel>
-        </Border>
-        
-        <Expander Grid.Row="3" Header="Command Simulator" IsExpanded="False" Margin="0,7,0,1">
+        <Expander Grid.Row="2" IsExpanded="False" Margin="0,7,0,1">
+            <Expander.Header>
+                <TextBlock Text="Flashing Firmware file" FontWeight="Bold"/>
+            </Expander.Header>
             <Border BorderBrush="Gray" BorderThickness="1" CornerRadius="6" Padding="10">
                 <StackPanel>
-                    <Separator Margin="0,0,0,10"/>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                        <Button Content="Open FW File" Click="OpenFileButton_Click" Width="80" Height="22"/>
+                    </StackPanel>
+                    <Border BorderBrush="DarkGray" BorderThickness="1" CornerRadius="0">
+                        <TextBlock x:Name="SelectedFileText" Width="450" Height="25" Padding="5,2"/>
+                    </Border>
+                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Orientation="Horizontal" Margin="0,10,0,0">
+                        <Button Content="Upload" Width="110" Height="25" Margin="5,0" Click="UploadButton_Click"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </Expander>
+        
+        <Expander Grid.Row="3" IsExpanded="False" Margin="0,7,0,1">
+            <Expander.Header>
+                <TextBlock Text="Command Simulator" FontWeight="Bold"/>
+            </Expander.Header>
+            <Border BorderBrush="Gray" BorderThickness="1" CornerRadius="6" Padding="10">
+                <StackPanel>
                     <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                         <Button Content="Open File" Width="80" Click="OpenCommandFileButton_Click"/>
                     </StackPanel>
@@ -82,6 +87,7 @@
                 </StackPanel>
             </Border>
         </Expander>
+
         <Border Grid.Row="4" Margin="0,7,0,1" Padding="10" Grid.RowSpan="2">
             <Button Width="100" Height="30" HorizontalAlignment="Right" VerticalAlignment="Top" Click="ExitButton_Click">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
