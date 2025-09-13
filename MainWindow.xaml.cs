@@ -224,6 +224,7 @@ namespace MobiDude_V2
 
             ShowUploadWindow();
             await FirmwareUploader.StartUpload(selectedFilePath, selectedBoard, selectedPort, uploadWindow!);
+            uploadWindow!.AppendLine("\n\rYou can close this window now.");
         }
 
         private void RefreshComPortListButton_Click(object sender, RoutedEventArgs e)
@@ -283,21 +284,21 @@ namespace MobiDude_V2
                     token,
                     uploadWindow!);
 
-                uploadWindow.Dispatcher.Invoke(() =>
+                uploadWindow!.Dispatcher.Invoke(() =>
                 {
                     uploadWindow!.AppendLine("\nDone.");
                 });
             }
             catch (OperationCanceledException)
             {
-                uploadWindow.Dispatcher.Invoke(() =>
+                uploadWindow!.Dispatcher.Invoke(() =>
                 {
                     uploadWindow!.AppendLine("\nCanceled by user.");
                 });
             }
             catch (Exception ex)
             {
-                uploadWindow.Dispatcher.Invoke(() =>
+                uploadWindow!.Dispatcher.Invoke(() =>
                 {
                     uploadWindow!.AppendLine($"\nError: {ex.Message}");
                 });
@@ -326,7 +327,7 @@ namespace MobiDude_V2
                 return;
             }
 
-            // JSON nach dem Dump-Filename durchsuchen
+            // search in JSON for Dump filename
             string dumpFileName = selectedBoard.EEPROMdump;
             if (string.IsNullOrEmpty(dumpFileName))
             {
@@ -334,7 +335,7 @@ namespace MobiDude_V2
                 return;
             }
 
-            // Dump-Hexfile liegt unter Data/DumpEEPROM/
+            // Dump-Hexfile is under Data/DumpEEPROM/
             string baseDir = AppContext.BaseDirectory;
             string dumpFilePath = Path.Combine(baseDir, "Data", "DumpEEPROM", dumpFileName);
 
@@ -347,15 +348,21 @@ namespace MobiDude_V2
             ShowUploadWindow();
             uploadWindow!.AppendLine("Starting EEPROM dump upload...");
 
-            // Flashen
+            // Flash the hex file
             await FirmwareUploader.StartUpload(dumpFilePath, selectedBoard, selectedPort, uploadWindow!);
 
+            uploadWindow!.AppendLine("---------------------------------------------------");
             uploadWindow!.AppendLine("EEPROM dump upload finished.");
             uploadWindow!.AppendLine("Connecting to board to capture dump output...");
+            uploadWindow!.AppendLine("EEPROM content is: ");
+            uploadWindow!.AppendLine("");
 
-            // Seriell verbinden und in Data/DumpEEPROM.txt schreiben
+            // connect via serial connection and write output in DumpEEPROM.txt
             try
             {
+                uploadWindow!.AppendLine("Connecting to board to capture dump output...");
+                uploadWindow!.AppendLine("EEPROM content is: ");
+                uploadWindow!.AppendLine("");
                 using var sp = new SerialPort(selectedPort, 115200, Parity.None, 8, StopBits.One)
                 {
                     ReadTimeout = 2000,
@@ -371,18 +378,20 @@ namespace MobiDude_V2
                 while (true)
                 {
                     string line = sp.ReadLine();
-                    uploadWindow.AppendLine(line);
+                    uploadWindow!.AppendLine(line);
                     writer.WriteLine(line);
                     writer.Flush();
                 }
             }
             catch (TimeoutException)
             {
-                uploadWindow.AppendLine("EEPROM dump completed. Output written to Data/DumpEEPROM.txt");
+                uploadWindow!.AppendLine("---------------------------------------------------");
+                uploadWindow!.AppendLine("\n\rEEPROM dump completed. Output written to DumpEEPROM.txt");
+                uploadWindow!.AppendLine("\n\rYou can close this window now.");
             }
             catch (Exception ex)
             {
-                uploadWindow.AppendLine($"Error during EEPROM dump: {ex.Message}");
+                uploadWindow!.AppendLine($"Error during EEPROM dump: {ex.Message}");
             }
         }
 
@@ -401,7 +410,7 @@ namespace MobiDude_V2
                 return;
             }
 
-            string resetFileName = selectedBoard.EEPROMclear; // ⚡ JSON-Feld nutzen
+            string resetFileName = selectedBoard.EEPROMclear;
             if (string.IsNullOrEmpty(resetFileName))
             {
                 MessageBox.Show("This board has no EEPROM clear file defined.");
@@ -409,7 +418,7 @@ namespace MobiDude_V2
             }
 
             string baseDir = AppContext.BaseDirectory;
-            string resetFilePath = Path.Combine(baseDir, "Data", "DumpEEPROM", resetFileName);
+            string resetFilePath = Path.Combine(baseDir, "Data", "ClearEEPROM", resetFileName);
 
             if (!File.Exists(resetFilePath))
             {
@@ -426,11 +435,11 @@ namespace MobiDude_V2
                     resetFilePath,
                     selectedBoard,
                     selectedPort,
-                    uploadWindow! // Meldungen direkt ins Fenster
+                    uploadWindow!
                 );
 
-                uploadWindow.AppendLine("EEPROM clear finished.");
-                uploadWindow.AppendLine("You can now close this window.");
+                uploadWindow!.AppendLine("\n\rEEPROM clear finished.");
+                uploadWindow!.AppendLine("\n\rYou can now close this window.");
             }
             catch (Exception ex)
             {
