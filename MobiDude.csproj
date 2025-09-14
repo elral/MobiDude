@@ -57,4 +57,25 @@
     <Folder Include="info\" />
   </ItemGroup>
 
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
+
+    <!-- 🔹 Change only here -->
+    <Version>2.2.0</Version>
+
+    <!-- 🔹 Assembly- and File-Versions from <Version> -->
+    <AssemblyVersion>$(Version).0</AssemblyVersion>
+    <FileVersion>$(Version).0</FileVersion>
+
+    <!-- Optional: Metadaten -->
+    <Company>elral</Company>
+    <Product>MobiDude Firmware Uploader</Product>
+    <Authors>elral</Authors>
+    <Description>Tool zum Flashen und Verwalten von MobiFlight Boards</Description>
+    <Copyright>© 2025 elral</Copyright>
+  </PropertyGroup>
+
 </Project>
