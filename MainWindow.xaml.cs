@@ -69,11 +69,11 @@ namespace MobiDude_V2
             Application.Current.Shutdown();
         }
 
-        private void ShowUploadWindow()
+        private void ShowUploadWindow(StreamWriter writer)
         {
             if (uploadWindow == null || !uploadWindow.IsVisible)
             {
-                uploadWindow = new UploadWindow();
+                uploadWindow = new UploadWindow(writer);
                 uploadWindow.Show();
             }
             else
@@ -222,7 +222,11 @@ namespace MobiDude_V2
                 return;
             }
 
-            ShowUploadWindow();
+            string baseDir = AppContext.BaseDirectory;
+            string logFile = Path.Combine(baseDir, "log_Upload_FW.txt");
+            using var writer = new StreamWriter(logFile, false, Encoding.UTF8);
+
+            ShowUploadWindow(writer);
             await FirmwareUploader.StartUpload(selectedFilePath, selectedBoard, selectedPort, uploadWindow!);
             uploadWindow!.AppendLine("\n\rYou can close this window now.");
         }
@@ -273,7 +277,11 @@ namespace MobiDude_V2
             var token = cancellationTokenSource.Token;
             bool repeat = RepeatCheckbox.IsChecked == true;
 
-            ShowUploadWindow();
+            string baseDir = AppContext.BaseDirectory;
+            string logFile = Path.Combine(baseDir, "log_Send_command_file.txt");
+            using var writer = new StreamWriter(logFile, false, Encoding.UTF8);
+
+            ShowUploadWindow(writer);
 
             try
             {
@@ -345,7 +353,10 @@ namespace MobiDude_V2
                 return;
             }
 
-            ShowUploadWindow();
+            string logFile = Path.Combine(baseDir, "log_EEPROM_Dump.txt");
+            using var writer = new StreamWriter(logFile, false, Encoding.UTF8);
+
+            ShowUploadWindow(writer);
             uploadWindow!.AppendLine("Starting EEPROM dump upload...");
 
             // Flash the hex file
@@ -353,16 +364,13 @@ namespace MobiDude_V2
 
             uploadWindow!.AppendLine("---------------------------------------------------");
             uploadWindow!.AppendLine("EEPROM dump upload finished.");
-            uploadWindow!.AppendLine("Connecting to board to capture dump output...");
-            uploadWindow!.AppendLine("EEPROM content is: ");
-            uploadWindow!.AppendLine("");
 
             // connect via serial connection and write output in DumpEEPROM.txt
             try
             {
                 uploadWindow!.AppendLine("Connecting to board to capture dump output...");
-                uploadWindow!.AppendLine("EEPROM content is: ");
-                uploadWindow!.AppendLine("");
+                uploadWindow!.AppendLine("EEPROM content is: ", false);
+                uploadWindow!.AppendLine("", false);
                 using var sp = new SerialPort(selectedPort, 115200, Parity.None, 8, StopBits.One)
                 {
                     ReadTimeout = 2000,
@@ -372,21 +380,16 @@ namespace MobiDude_V2
                 sp.DtrEnable = true;
                 Thread.Sleep(2000);
 
-                string logFile = Path.Combine(baseDir, "log_EEPROM_Dump.txt");
-                using var writer = new StreamWriter(logFile, false, Encoding.UTF8);
-
                 while (true)
                 {
                     string line = sp.ReadLine();
-                    uploadWindow!.AppendLine(line);
-                    writer.WriteLine(line);
-                    writer.Flush();
+                    uploadWindow!.AppendLine(line, false);
                 }
             }
             catch (TimeoutException)
             {
                 uploadWindow!.AppendLine("---------------------------------------------------");
-                uploadWindow!.AppendLine("\n\rEEPROM dump completed. Output written to DumpEEPROM.txt");
+                uploadWindow!.AppendLine("\n\rEEPROM dump completed. Output written to log_EEPROM_Dump.txt");
                 uploadWindow!.AppendLine("\n\rYou can close this window now.");
             }
             catch (Exception ex)
@@ -426,7 +429,10 @@ namespace MobiDude_V2
                 return;
             }
 
-            ShowUploadWindow();
+            string logFile = Path.Combine(baseDir, "log_Reset_EEPROM.txt");
+            using var writer = new StreamWriter(logFile, false, Encoding.UTF8);
+
+            ShowUploadWindow(writer);
             uploadWindow!.AppendLine("Starting EEPROM clear...");
 
             try
@@ -477,8 +483,11 @@ namespace MobiDude_V2
                 return;
             }
 
-            ShowUploadWindow();
-            uploadWindow!.AppendLine("Starting flashing the FW...");
+            string logFile = Path.Combine(baseDir, "log_Flash_MobiFlight_FW.txt");
+            using var writer = new StreamWriter(logFile, false, Encoding.UTF8);
+
+            ShowUploadWindow(writer);
+            uploadWindow!.AppendLine("Starting flashing the MobiFlight FW...");
 
             try
             {
@@ -489,7 +498,7 @@ namespace MobiDude_V2
                     uploadWindow!
                 );
 
-                uploadWindow!.AppendLine("\n\rFlashing firmware finished.");
+                uploadWindow!.AppendLine("\n\rFlashing MobiFlight firmware finished.");
                 uploadWindow!.AppendLine("\n\rYou can now close this window.");
             }
             catch (Exception ex)

@@ -164,7 +164,7 @@ namespace MobiDude_V2
                             }
                             else
                             {
-                                uploadWindow.AppendLine(e.Data);
+                                uploadWindow.AppendLine(e.Data, false);
                             }
                         }
                     };
@@ -179,7 +179,7 @@ namespace MobiDude_V2
                             }
                             else
                             {
-                                uploadWindow.AppendLine(e.Data);
+                                uploadWindow.AppendLine(e.Data, false);
                             }
                         }
                     };
@@ -198,7 +198,6 @@ namespace MobiDude_V2
                         uploadWindow.AppendLine("\n❌ Upload failure.");
                         uploadWindow.AppendLine($"Failure code: {process.ExitCode}");
                     }
-                    uploadWindow.AppendLine("\n\rYou can close this window now.");
                 }
             }
             catch (Exception ex)

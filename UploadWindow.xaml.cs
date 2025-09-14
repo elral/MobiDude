@@ -1,29 +1,43 @@
-﻿using System.Windows;
+﻿using System.IO;
+using System.Windows;
+using System.Windows.Shapes;
 
 namespace MobiDude_V2
 {
     public partial class UploadWindow : Window
     {
-        public UploadWindow()
+        StreamWriter _writer;
+        public UploadWindow(StreamWriter writer)
         {
             InitializeComponent();
+            _writer = writer;
         }
 
-        public void AppendLine(string line)
+        public void AppendLine(string line, bool print = true)
         {
             Dispatcher.Invoke(() =>
             {
-                OutputTextBox.AppendText(line + "\n");
-                OutputTextBox.ScrollToEnd();
+                if (print)
+                {
+                    OutputTextBox.AppendText(line + "\n");
+                    OutputTextBox.ScrollToEnd();
+                }
+                _writer.WriteLine(line);
+                _writer.Flush();
             });
         }
 
-        public void AppendText(string text)
+        public void AppendText(string text, bool print = true)
         {
             Dispatcher.Invoke(() =>
             {
-                OutputTextBox.AppendText(text);
-                OutputTextBox.ScrollToEnd();
+                if (print)
+                {
+                    OutputTextBox.AppendText(text);
+                    OutputTextBox.ScrollToEnd();
+                }
+                _writer.WriteLine(text);
+                _writer.Flush();
             });
         }
     }
