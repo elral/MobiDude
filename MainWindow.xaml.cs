@@ -372,7 +372,7 @@ namespace MobiDude_V2
                 sp.DtrEnable = true;
                 Thread.Sleep(2000);
 
-                string logFile = Path.Combine(baseDir, "DumpEEPROM.txt");
+                string logFile = Path.Combine(baseDir, "log_EEPROM_Dump.txt");
                 using var writer = new StreamWriter(logFile, false, Encoding.UTF8);
 
                 while (true)
