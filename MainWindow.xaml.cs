@@ -228,6 +228,7 @@ namespace MobiDude_V2
 
             ShowUploadWindow(writer);
             await FirmwareUploader.StartUpload(selectedFilePath, selectedBoard, selectedPort, uploadWindow!);
+            uploadWindow!.AppendLine("\nDone. Output written to log_Upload_FW.txt");
             uploadWindow!.AppendLine("\n\rYou can close this window now.");
         }
 
@@ -294,7 +295,8 @@ namespace MobiDude_V2
 
                 uploadWindow!.Dispatcher.Invoke(() =>
                 {
-                    uploadWindow!.AppendLine("\nDone.");
+                    uploadWindow!.AppendLine("\nDone. Output written to log_Send_command_file.txt");
+                    uploadWindow!.AppendLine("\n\rYou can close this window now.");
                 });
             }
             catch (OperationCanceledException)
@@ -444,7 +446,7 @@ namespace MobiDude_V2
                     uploadWindow!
                 );
 
-                uploadWindow!.AppendLine("\n\rEEPROM clear finished.");
+                uploadWindow!.AppendLine("\n\rEEPROM clear finished.Output written to log_Reset_EEPROM.txt");
                 uploadWindow!.AppendLine("\n\rYou can now close this window.");
             }
             catch (Exception ex)
@@ -498,7 +500,7 @@ namespace MobiDude_V2
                     uploadWindow!
                 );
 
-                uploadWindow!.AppendLine("\n\rFlashing MobiFlight firmware finished.");
+                uploadWindow!.AppendLine("\n\rFlashing MobiFlight firmware finished. Output written to log_Flash_MobiFlight_FW.txt");
                 uploadWindow!.AppendLine("\n\rYou can now close this window.");
             }
             catch (Exception ex)

@@ -1,17 +1,16 @@
 ﻿# AVR Firmware Uploader
 
-April 12 2025 - v2.0.0
+September 14 2025 - v2.2.0
 
 Yes, it's just a simple GUI for avrdude and ESP32tool.
 
-It is based on https://github.com/maddsua/arduinouploader
-
 Features:
+- Dumps and Resets EEPROM from MobiFlight boards and logs to .txt files
 - Upload firmware files by just defining your Arduino Board and selecting the firmware file
 - Sometimes the ProMicro gets a time out from AVRDude. In this case just start again flashing
 - Pico must **not** be in bootloader mode for now
 
-<img src="info/interface-200.jpg" width="356"/>
+<img src="info/interface-220.jpg" width="356"/>
 
 
 ## List of arduino boards
@@ -27,16 +26,17 @@ Features:
 
 ## Erase EEPROM
 
-For the above mentioned boards also an erase EEPROM .hex file is included.
-The files are in the folder `./Tools/ClearEEPROM_HEX`.
-Choose the file according your board.
-If you upload this firmware, the existing firmware and the eeprom content will be erased.
+Just hit the button `Reset EEPROM`.
+The clear EEPROM firmware will be uploaded and the EEPROM gets cleared. Messages are also copied into `log_Reset_EEPROM.txt`
+
 Afterwords upload your firmware file again.
 
 With version 1.0.2 of the EEPROM clear hex files the build in LED of the Arduinos will blink after clearing the EEPROM
 
 ## Dump EEPROM
 
+Just hit the button `Dump EEPROM`.
+The dump EEPROM firmware will be uploaded and the EEPROM gets dumped into the log file `log_EEPROM_Dump.txt`
 For the above mentioned boards also a dump EEPROM .hex file is included.
 The files are in the folder `./Tools/DumpEEPROM_HEX`.
 Choose the file according your board.
@@ -74,4 +74,4 @@ Press the `Cancel` Button to stop sending in this case.
 Just download the zip package, extract it in an own folder and run MobiDude.exe
 
 
-[Download package 📦](https://github.com/elral/MobiDude/releases/download/2.0.0/MobiDude-2.0.0.zip)
+[Download package 📦](https://github.com/elral/MobiDude/releases/download/2.0.0/MobiDude-2.2.0.zip)
