@@ -32,7 +32,7 @@ xcopy /E /Y /I /F ".\Tools" "%BUILD_DIR%\Tools\"
 
 REM create ZIP-file
 set ZIP_NAME=MobiDude_%VERSION%.zip
-powershell -Command "Compress-Archive -Path '%BUILD_DIR%\*' -DestinationPath '%ZIP_DIR%\%ZIP_NAME%' -Force"
+powershell -Command "Compress-Archive -Path '%ZIP_DIR%\*' -DestinationPath '%ZIP_DIR%\%ZIP_NAME%' -Force"
 
 echo ----------------------------------------
 echo ? Published in: %BUILD_DIR%
