@@ -39,7 +39,7 @@
                         <Button Content="Get Info" Width="100" Height="22" Margin="5,0" Click="GetInfoButton_Click"/>
                         <Button Content="Dump EEPROM" Click="DumpEEPROM_Button_Click" Width="117" Height="22" Margin="5,0"/>
                         <Button Content="Reset EEPROM" Click="ResetEEPROM_Button_Click" Width="117" Height="22" Margin="5,0"/>
-                        <Button Content="Flash Mobifight FW" Click="Flash_FW_Button_Click" Width="116" Height="22" Margin="5,0"/>
+                        <Button Content="Flash MF FW 3.1.4" Click="Flash_FW_Button_Click" Width="116" Height="22" Margin="5,0"/>
                     </StackPanel>
                     <StackPanel VerticalAlignment="Center"  HorizontalAlignment="Center" Orientation="Horizontal" Margin="0,15,5,0">
                         <Button Content="Terminal" Width="110" Height="22" Margin="5,0" Click="TerminalButton_Click"/>
