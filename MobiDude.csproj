@@ -64,7 +64,7 @@
     <Nullable>enable</Nullable>
 
     <!-- 🔹 Change only here -->
-    <Version>2.2.0</Version>
+    <Version>2.2.1</Version>
 
     <!-- 🔹 Assembly- and File-Versions from <Version> -->
     <AssemblyVersion>$(Version).0</AssemblyVersion>
@@ -75,7 +75,7 @@
     <Product>MobiDude Firmware Uploader</Product>
     <Authors>elral</Authors>
     <Description>Tool zum Flashen und Verwalten von MobiFlight Boards</Description>
-    <Copyright>© 2025 elral</Copyright>
+    <Copyright>© 2026 elral</Copyright>
   </PropertyGroup>
 
 </Project>
