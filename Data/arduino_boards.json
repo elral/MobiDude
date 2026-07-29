@@ -115,7 +115,7 @@
     "Tool": "Picotool",
     "Protocol": "",
     "Baudrate": "",
-    "EEPROMclear": "ClearEEPROM_raspberrypico2_1_0_2.uf2",
+    "EEPROMclear": "ClearEEPROM_raspberry_pico2_1_0_2.uf2",
     "EEPROMdump": "dumpEEPROM.arduino_raspberrypico2_1_0_2.uf2",
     "MobiFlightFW": "mobiflight_raspberrypico2_3_1_4.uf2"
   }
