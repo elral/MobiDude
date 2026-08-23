@@ -1,6 +1,6 @@
 ﻿# AVR Firmware Uploader
 
-September 14 2025 - v2.2.0
+July 2026 - v2.2.2
 
 Yes, it's just a simple GUI for avrdude and ESP32tool.
 
@@ -74,4 +74,4 @@ Press the `Cancel` Button to stop sending in this case.
 Just download the zip package, extract it in an own folder and run MobiDude.exe
 
 
-[Download package 📦](https://github.com/elral/MobiDude/releases/download/2.0.0/MobiDude-2.2.2.zip)
+[Download package 📦](https://github.com/elral/MobiDude/releases/download/2.2.2/MobiDude-2.2.2.zip)
