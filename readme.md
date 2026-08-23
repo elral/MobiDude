@@ -74,4 +74,4 @@ Press the `Cancel` Button to stop sending in this case.
 Just download the zip package, extract it in an own folder and run MobiDude.exe
 
 
-[Download package 📦](https://github.com/elral/MobiDude/releases/download/2.0.0/MobiDude-2.2.0.zip)
+[Download package 📦](https://github.com/elral/MobiDude/releases/download/2.0.0/MobiDude-2.2.2.zip)
