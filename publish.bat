@@ -1,7 +1,7 @@
 @echo off
 REM ----------------------------------------
 REM folders and settings
-set BUILD_DIR=bin\publish\Mobiflight
+set BUILD_DIR=bin\publish\MobiDude
 set ZIP_DIR=bin\publish
 set RUNTIME=win-x64
 set CONFIG=Release
